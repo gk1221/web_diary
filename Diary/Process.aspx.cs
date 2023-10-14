@@ -477,7 +477,7 @@ public partial class Diary_Process : System.Web.UI.Page
         string SaveFlag = "1";
         if (DiaryNo != "") SaveFlag = GetValue("Diary", "select count(*) from [Diary] where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo
              + " and ([Status]<>" + SelStatus.SelectedValue + " or [e_tour]<>'" + e_tour + "' or [Degree]<>" + SelDegree.SelectedValue
-             + " or [SysCode]<>'" + SelSysCode.SelectedValue + "' or [Kind]<>'" + SelKind.SelectedValue + "') or [process_time]<>" + txtPM.Text);
+             + " or [SysCode]<>'" + SelSysCode.SelectedValue + "' or [Kind]<>'" + SelKind.SelectedValue + "') or [process_time]<>'" + txtPM.Text +"'");
         if (SaveFlag == "1") ExecDbSQL("update [Diary] set [SaveDT]='" + SaveDT + "',[Degree]=" + SelDegree.SelectedValue + ",[SysCode]='" + SelSysCode.SelectedValue
              + "',[Kind]='" + SelKind.SelectedValue + "',[Status]=" + SelStatus.SelectedValue + ",[e_tour]='" + e_tour + "',[process_time] = " + txtPM.Text
              + " where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo );
