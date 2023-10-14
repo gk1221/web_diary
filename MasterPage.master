@@ -1,0 +1,160 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeFile="MasterPage.master.cs" Inherits="MasterPage" Debug="true" %>
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head runat="server">
+    <asp:ContentPlaceHolder ID="head" runat="server">
+        
+    </asp:ContentPlaceHolder>
+    <style type="text/css">
+        .style0
+        {
+            text-align: center;
+        }
+        .style1
+        {
+            text-align: center;
+            font-size: x-large;
+        }
+        .style2
+        {
+            color: #006600;
+        }
+        .style3
+        {
+            color: #003300;
+        }
+        .fixedwidth
+        {
+            word-break: break-all;    
+        }
+		
+    </style>
+</head>
+<body runat="server" id="pMaster" style="width: 100%; margin: 0;" onkeydown="Cmd_KeyDown(event.keyCode);">
+    <form id="form1" runat="server">
+    <asp:Table ID="tblHead" runat="server" Width="100%">
+        <asp:TableRow runat="server" Height="50">
+            <asp:TableCell runat="server" HorizontalAlign="Right" Style="background:;
+                background-repeat: no-repeat; background-color:#7AAEFF; vertical-align: bottom;">
+                <table style="margin: 0">
+                    <tr>
+                        <td align="left">
+                            <asp:Menu ID="Menu1" runat="server" BackColor="" DynamicMenuStyle-BackColor="Transparent" DynamicHorizontalOffset="2" StaticEnableDefaultPopOutImage="false"
+                                MaximumDynamicDisplayLevels="3" Font-Names="標楷體" Font-Size="Medium" ForeColor="Black"
+                                Orientation="Horizontal" StaticMenuStyle-BorderWidth="0" StaticSubMenuIndent="10px"
+                                BorderStyle="Groove" Font-Italic="False" StaticMenuItemStyle-Font-Size="X-Large"
+                                StaticMenuItemStyle-Font-Underline="true" RenderingMode="Table" OnMenuItemClick="MenuMt_MenuItemClick">
+                                <DynamicHoverStyle BackColor="#666666" ForeColor="White" />
+                                <DynamicMenuItemStyle HorizontalPadding="5px" VerticalPadding="2px" />
+                                <DynamicMenuStyle  BackColor="#E3EAEB" />
+                                <DynamicSelectedStyle BackColor="#1C5E55"  />
+                                <StaticMenuItemStyle ForeColor="Blue" />
+                                <Items>
+                                    <asp:MenuItem Text="發生訊息" NavigateUrl="Msg/Auto.aspx" ToolTip="同班自動訊息，再點一次變為當班">
+                                        <asp:MenuItem Text="自動訊息&nbsp;&nbsp;&nbsp;" NavigateUrl="Msg/Auto.aspx?tour=" ToolTip="當班自動訊息"></asp:MenuItem>
+                                        <asp:MenuItem Text="手動訊息" Selectable="false" ToolTip="當班手動訊息"></asp:MenuItem>
+                                        <asp:MenuItem Text="例行訊息&nbsp;&nbsp;&nbsp;" NavigateUrl="Msg/Rout.aspx?tour=" ToolTip="當班例行訊息"></asp:MenuItem>
+                                        <asp:MenuItem Text="環控訊息&nbsp;&nbsp;&nbsp;" NavigateUrl="Msg/Ems.aspx?tour=" ToolTip="當班環控訊息"></asp:MenuItem>
+                                        <asp:MenuItem Text="緊急應變&nbsp;&nbsp;&nbsp;" NavigateUrl="Msg/Event.aspx" ToolTip="最近緊急應變事件"></asp:MenuItem>
+                                    </asp:MenuItem>
+                                    <asp:MenuItem   Text="當班日誌" NavigateUrl="Diary/diary.aspx" ToolTip="同班日誌，再點一次變為當班">
+                                    </asp:MenuItem>
+                                    <asp:MenuItem Text="進階查詢" NavigateUrl="Search/Search.aspx">   
+                                        <asp:MenuItem Text="日誌查詢">
+                                            <asp:MenuItem Text="查關鍵字" NavigateUrl="Search/Search.aspx"></asp:MenuItem> 
+                                            <asp:MenuItem Text="屬性查詢" NavigateUrl="Search/Degree.aspx"></asp:MenuItem>
+                                            <asp:MenuItem Text="代碼查詢" NavigateUrl="Search/Code.aspx"></asp:MenuItem> 
+                                            <asp:MenuItem Text="人員查詢" NavigateUrl="Search/OP.aspx"></asp:MenuItem> 
+                                            <asp:MenuItem Text="追蹤查詢" NavigateUrl="Search/Trace.aspx"></asp:MenuItem> 
+                                            <asp:MenuItem Text="知識查詢" NavigateUrl="Search/Know.aspx"></asp:MenuItem> 
+                                            <asp:MenuItem Text="日期查詢" NavigateUrl="Search/Date.aspx"></asp:MenuItem>
+                                            <asp:MenuItem Text="簡易查詢" NavigateUrl="/control/device/diarydt.aspx"></asp:MenuItem> 
+                                        </asp:MenuItem> 
+                                        <asp:MenuItem Text="訊息查詢"> 
+                                            <asp:MenuItem Text="自動查詢" NavigateUrl="Search/AutoSearch.aspx"></asp:MenuItem> 
+                                            <asp:MenuItem Text="手動查詢" NavigateUrl="Search/ManuSearch.aspx"></asp:MenuItem> 
+                                            <asp:MenuItem Text="例行查詢" NavigateUrl="Search/RoutSearch.aspx"></asp:MenuItem>                                             
+                                            <asp:MenuItem Text="環控查詢" NavigateUrl="Search/EmsSearch.aspx"></asp:MenuItem>                                              
+                                        </asp:MenuItem> 
+                                        <asp:MenuItem Text="資安統計" NavigateUrl="Search/IS.aspx"></asp:MenuItem>
+                                        <asp:MenuItem Text="叫修記錄" NavigateUrl="Search/Call.aspx"></asp:MenuItem>
+                                    </asp:MenuItem>
+                                    <asp:MenuItem Text="系統設定" NavigateUrl="Config/Config.aspx">
+                                        <asp:MenuItem Text="參數設定" NavigateUrl="Config/Config.aspx"></asp:MenuItem>
+                                        <asp:MenuItem Text="訊息設定" ToolTip="設定路徑：發生訊息 -> 手動訊息 -> ...(某系統) -> 下方訊息設定按鈕"></asp:MenuItem>
+                                        <asp:MenuItem Text="小 鬧 鐘" NavigateUrl="Config/Clock.aspx"></asp:MenuItem>
+                                        <asp:MenuItem Text="異動記錄" NavigateUrl="Config/LifeLog.aspx"></asp:MenuItem>
+                                        <asp:MenuItem Text="系統手冊" NavigateUrl="Help/工作日誌擴充案.doc" Target="_blank"></asp:MenuItem>
+                                        <asp:MenuItem Text="使用手冊" NavigateUrl="Help/異常事件完整性sop.docx" Target="_blank"></asp:MenuItem>
+                                    </asp:MenuItem>
+                                </Items>
+                                <StaticHoverStyle BackColor="#666666" ForeColor="White" />
+                                <StaticMenuItemStyle HorizontalPadding="5px" VerticalPadding="2px" />
+                                <StaticSelectedStyle BackColor="#1C5E55" />
+                            </asp:Menu>
+                        </td>
+                    </tr>
+                </table>
+            </asp:TableCell>
+        </asp:TableRow>
+        <asp:TableRow runat="server">
+            <asp:TableCell runat="server">
+                <table width="100%">
+                    <tr>
+                        <td align="left">
+                            <asp:DropDownList ID="SelYYYY" runat="server" ForeColor="Green">
+                            </asp:DropDownList>年 &nbsp;
+                            <asp:DropDownList ID="SelMM" runat="server" ForeColor="Green">
+                            </asp:DropDownList>月 &nbsp;
+                            <asp:DropDownList ID="SelDD" runat="server" ForeColor="Green">
+                            </asp:DropDownList>日 &nbsp;
+                            <asp:DropDownList ID="SelClass" runat="server" ForeColor="Green">
+                                <asp:ListItem Value="1">早</asp:ListItem>
+                                <asp:ListItem Value="2">午</asp:ListItem>
+                                <asp:ListItem Value="3">晚</asp:ListItem>
+                            </asp:DropDownList>班 &nbsp;&nbsp;
+                            <asp:Button ID="BtnSearch" runat="server"  Text="查　詢" OnClick="BtnSearch_Click" />&nbsp;&nbsp;
+							
+							<asp:Button ID="BtnPrev" runat="server" ForeColor="Red"  Text="上一班" OnClick="BtnPrev_Click" />&nbsp;&nbsp;
+							<asp:Button ID="BtnNext" runat="server" ForeColor="Red"  Text="下一班" OnClick="BtnNext_Click" />&nbsp;&nbsp;&nbsp;
+													
+														
+                            <asp:Label runat="server" ID="lblWeek" ForeColor="Green" Text="星期Ｘ"></asp:Label>&nbsp;
+									
+														
+							
+                            <asp:Label runat="server" ID="lblSeason" ForeColor="Green" Text="節氣" Font-Names="標楷體"></asp:Label>　
+                            值班人員：<% SetOPs();   //顯示當班人員 %>
+                            <asp:Label runat="server" ID="lblLogin" ForeColor="Brown" Text="(登入資訊)"></asp:Label>
+                            &nbsp;
+                            <asp:Button ID="BtnSign" runat="server" Text="簽　到" OnClientClick="window.open('../Diary/Sign.aspx','_blank','scrolling=yes, scrollbars=yes, width=480,height=680,top=' + (screen.height-720)/2 + ',left=' + (screen.width-400)/2) ;" />
+                            <script type="text/javascript">
+                                function OPClick(PrevTour, NextTour, evt) {	//查OP上下一班
+                                    evt = evt ? evt : (window.event ? window.event : null);
+
+                                    if (evt.altKey || evt.ctrlKey || evt.shiftKey) window.open("diary.aspx?tour=" + NextTour, "_self");
+                                    else window.open("diary.aspx?tour=" + PrevTour, "_self");
+                                }
+                            </script>
+                        </td>
+                        <td align="center">
+                           
+                        </td>
+                    </tr>
+                </table>
+            </asp:TableCell>
+        </asp:TableRow>
+        <asp:TableRow runat="server">
+            <asp:TableCell ID="TableCell1" runat="server">
+                <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+                </asp:ContentPlaceHolder>
+            </asp:TableCell>
+        </asp:TableRow>
+    </asp:Table>
+    </form>
+</body>
+</html>
+
+
+                               
