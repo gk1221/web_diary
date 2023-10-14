@@ -180,7 +180,7 @@ Inherits="Diary_Process" %>
                 <asp:TextBox
                   ID="txtPM"
                   runat="server"
-                  Width="50"
+                  Width="30"
                   ForeColor="Green"
                   CssClass="style0"
                 ></asp:TextBox>
