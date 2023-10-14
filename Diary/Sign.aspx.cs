@@ -222,7 +222,7 @@ public partial class Diary_Sign : System.Web.UI.Page
 
 			ExecDbSQL("delete from [diary] where [tour]='" + tour + "' and [DiaryNo]=0");
 			ExecDbSQL("delete from [Msg] where [tour]='" + tour + "' and [DiaryNo]=0");
-			ExecDbSQL("insert into [diary] values('" + tour + "',0,'" + DiaryDT + "','" + nowDT + "',0,'',0,'***','f', NULL, NULL, NULL)");
+			ExecDbSQL("insert into [diary] values('" + tour + "',0,'" + DiaryDT + "','" + nowDT + "',0,'',0,'***','f', NULL, NULL, NULL, NULL)");
 
 			string WeekDay = DateTime.Parse(DiaryDT).DayOfWeek.ToString("d"); if (WeekDay == "0") WeekDay = "7";
 			string SQL = "select * from [Clock] where [WorkYN]='Y' and [RoutYN]='Y'" 
@@ -271,7 +271,7 @@ public partial class Diary_Sign : System.Web.UI.Page
 					MsgNo = GetValue("Diary", "select max([MsgNo])+1 from [Msg] where [tour]='" + tour + "'"); if (MsgNo == "") MsgNo = "1";
 					ProcessNo = GetValue("Diary", "select max([ProcessNo])+1 from [Process] where [tour]='" + tour + "'"); if (ProcessNo == "") ProcessNo = "1";
 
-					ExecDbSQL("insert into [Diary] values('" + tour + "'," + DiaryNo + ",'" + DiaryDT + "','" + nowDT + "',0,'',0,'992','d', NULL, NULL, NULL)");
+					ExecDbSQL("insert into [Diary] values('" + tour + "'," + DiaryNo + ",'" + DiaryDT + "','" + nowDT + "',0,'',0,'992','d', NULL, NULL, NULL, NULL)");
 					ExecDbSQL("insert into [Msg] values('" + tour + "'," + DiaryNo + "," + MsgNo + ",'" + DiaryDT + "','" + nowDT + "','" + THCode + "','"+ SopMsg + "',0)");
 					ExecDbSQL("insert into [Process] values('" + tour + "'," + DiaryNo + "," + ProcessNo + ",'" + DiaryDT + "','" + nowDT
 						+ "','" + strTH + "','" + Request.Cookies["UnitID"].Value + "','" + Request.Cookies["UserID"].Value + "','" 
@@ -289,7 +289,7 @@ public partial class Diary_Sign : System.Web.UI.Page
 					MsgNo = GetValue("Diary", "select max([MsgNo])+1 from [Msg] where [tour]='" + tour + "'"); if (MsgNo == "") MsgNo = "1";
 					ProcessNo = GetValue("Diary", "select max([ProcessNo])+1 from [Process] where [tour]='" + tour + "'"); if (ProcessNo == "") ProcessNo = "1";
 
-					ExecDbSQL("insert into [Diary] values('" + tour + "'," + DiaryNo + ",'" + DiaryDT + "','" + nowDT + "',0,'',0,'992','d', NULL, NULL, NULL)");
+					ExecDbSQL("insert into [Diary] values('" + tour + "'," + DiaryNo + ",'" + DiaryDT + "','" + nowDT + "',0,'',0,'992','d', NULL, NULL, NULL, NULL)");
 					ExecDbSQL("insert into [Msg] values('" + tour + "'," + DiaryNo + "," + MsgNo + ",'" + DiaryDT + "','" + nowDT + "','" + RoutCode + "','" + SopMsg + "',0)");
 					string strRout = GetValue("Diary", "select [Memo] from [Config] where [Kind]='導入詞彙' and [Mark]='841'");
 					ExecDbSQL("insert into [Process] values('" + tour + "'," + DiaryNo + "," + ProcessNo + ",'" + DiaryDT + "','" + nowDT
