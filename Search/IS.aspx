@@ -23,7 +23,7 @@ Inherits="Search_IS" %>
       AppendDataBoundItems="true"
     >
       <asp:ListItem Value="">全部系統(***)</asp:ListItem>
-      <asp:ListItem Value="002">AMDP(已刪除)</asp:ListItem>
+      <asp:ListItem Value="001">MIPS(已刪除)</asp:ListItem>
       <asp:ListItem Value="106">AIMS(已刪除)</asp:ListItem>
       <asp:ListItem Value="200">AMID(已刪除)</asp:ListItem>
     </asp:DropDownList>
