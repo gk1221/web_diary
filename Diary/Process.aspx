@@ -1,4 +1,4 @@
-<%@ Page Title="³B²z¹Lµ{" Language="C#" MasterPageFile="../MasterPage.master"
+ï»¿<%@ Page Title="è™•ç†éç¨‹" Language="C#" MasterPageFile="../MasterPage.master"
 AutoEventWireup="true" validateRequest="false" Debug="true"
 MaintainScrollPositionOnPostback="true" CodeFile="Process.aspx.cs"
 Inherits="Diary_Process" %>
@@ -10,7 +10,7 @@ Inherits="Diary_Process" %>
   ContentPlaceHolderID="ContentPlaceHolder1"
   runat="Server"
 >
-  <!----------------¼ĞÃD--------------------------------------------------------------->
+  <!----------------æ¨™é¡Œ--------------------------------------------------------------->
   <br />
   <div align="center">
     <table
@@ -22,39 +22,39 @@ Inherits="Diary_Process" %>
       "
     >
       <tr>
-        <td align="center" style="font-size: xx-large; font-family: ¼Ğ·¢Åé">
-          ³B²z¹Lµ{µn¿ıµe­±
+        <td align="center" style="font-size: xx-large; font-family: æ¨™æ¥·é«”">
+          è™•ç†éç¨‹ç™»éŒ„ç•«é¢
         </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
       </tr>
-      <!----------------³B²z®É¶¡--------------------------------------------------------------->
+      <!----------------è™•ç†æ™‚é–“--------------------------------------------------------------->
       <tr>
-        <td align="left" style="font-size: large; font-family: ¼Ğ·¢Åé">
-          &nbsp;³B²z®É¶¡:&nbsp;
+        <td align="left" style="font-size: large; font-family: æ¨™æ¥·é«”">
+          &nbsp;è™•ç†æ™‚é–“:&nbsp;
           <asp:DropDownList ID="SelProYYYY" runat="server" ForeColor="Green">
           </asp:DropDownList
-          >¦~
+          >å¹´
           <asp:DropDownList ID="SelProMM" runat="server" ForeColor="Green">
           </asp:DropDownList
-          >¤ë
+          >æœˆ
           <asp:DropDownList ID="SelProDD" runat="server" ForeColor="Green">
           </asp:DropDownList
-          >¤é&nbsp;&nbsp;
+          >æ—¥&nbsp;&nbsp;
           <asp:DropDownList ID="SelProHH" runat="server" ForeColor="Green">
           </asp:DropDownList
-          >®É
+          >æ™‚
           <asp:DropDownList ID="SelProMI" runat="server" ForeColor="Green">
           </asp:DropDownList
-          >¤À &nbsp;&nbsp; °O¿ı¤H­û:
+          >åˆ† &nbsp;&nbsp; è¨˜éŒ„äººå“¡:
           <asp:DropDownList
             ID="SelOP"
             runat="server"
             ForeColor="Green"
             DataSourceID="SqlDataSourceOP"
-            DataValueField="¥N¸¹"
-            DataTextField="¦¨­û"
+            DataValueField="ä»£è™Ÿ"
+            DataTextField="æˆå“¡"
           >
             <asp:ListItem></asp:ListItem>
           </asp:DropDownList>
@@ -65,7 +65,7 @@ Inherits="Diary_Process" %>
             SelectCommand=""
           >
           </asp:SqlDataSource
-          >&nbsp;&nbsp; Åv³d¤p²Õ/­t³d¤Hµû¤À:
+          >&nbsp;&nbsp; æ¬Šè²¬å°çµ„/è² è²¬äººè©•åˆ†:
           <asp:TextBox
             ID="txtRt"
             runat="server"
@@ -73,15 +73,15 @@ Inherits="Diary_Process" %>
             ForeColor="Green"
             CssClass="style0"
           ></asp:TextBox>
-          <asp:Button ID="BtnRate" runat="server" Text="µû!" />
+          <asp:Button ID="BtnRate" runat="server" Text="è©•!" />
 
           <font
             color="blue"
             size="2"
             style="cursor: pointer"
-            onclick="alert('©ó¾÷©Ğ¤§¦w¤º©Î¤½¥Î¹q¸£·s¼W°O¿ı®É¡A¥i§ï¿ï¨ä¥¦°O¿ı¤H­û¡I\n\n¦ı·s¼W¥H«á¡A°ß°O¿ı¤H­û¥i­×§ï°O¿ı¡C\n\n«D¾÷©Ğ¤H­û¥»¿ï¶µµL§@¥Î¡A½Ğ©¿²¤¤§¡C');"
+            onclick="alert('æ–¼æ©Ÿæˆ¿ä¹‹å®‰å…§æˆ–å…¬ç”¨é›»è…¦æ–°å¢è¨˜éŒ„æ™‚ï¼Œå¯æ”¹é¸å…¶å®ƒè¨˜éŒ„äººå“¡ï¼\n\nä½†æ–°å¢ä»¥å¾Œï¼Œå”¯è¨˜éŒ„äººå“¡å¯ä¿®æ”¹è¨˜éŒ„ã€‚\n\néæ©Ÿæˆ¿äººå“¡æœ¬é¸é …ç„¡ä½œç”¨ï¼Œè«‹å¿½ç•¥ä¹‹ã€‚');"
           >
-            <u>»¡©ú</u>
+            <u>èªªæ˜</u>
           </font>
           <br />
         </td>
@@ -90,13 +90,13 @@ Inherits="Diary_Process" %>
         <td>&nbsp;</td>
       </tr>
 
-      <!----------------³B²z¹Lµ{--------------------------------------------------------------->
+      <!----------------è™•ç†éç¨‹--------------------------------------------------------------->
       <tr>
         <td align="left">
           <table border="0" cellpadding="0" cellspacing="0">
             <tr>
-              <td align="left" style="font-size: large; font-family: ¼Ğ·¢Åé">
-                &nbsp;³B²z¹Lµ{:
+              <td align="left" style="font-size: large; font-family: æ¨™æ¥·é«”">
+                &nbsp;è™•ç†éç¨‹:
               </td>
 
               <td align="left" valign="middle">
@@ -107,7 +107,7 @@ Inherits="Diary_Process" %>
                   DynamicHorizontalOffset="2"
                   StaticEnableDefaultPopOutImage="false"
                   MaximumDynamicDisplayLevels="3"
-                  Font-Names="¼Ğ·¢Åé"
+                  Font-Names="æ¨™æ¥·é«”"
                   Font-Size="Small"
                   ForeColor="Black"
                   Orientation="Horizontal"
@@ -129,7 +129,7 @@ Inherits="Diary_Process" %>
                   <DynamicSelectedStyle BackColor="LightGreen" />
                   <StaticMenuItemStyle ForeColor="Green" />
                   <Items>
-                    <asp:MenuItem Text="¾É¤Jµü·J"> </asp:MenuItem>
+                    <asp:MenuItem Text="å°å…¥è©å½™"> </asp:MenuItem>
                   </Items>
                   <StaticHoverStyle BackColor="#666666" ForeColor="White" />
                   <StaticMenuItemStyle
@@ -140,16 +140,16 @@ Inherits="Diary_Process" %>
                 </asp:Menu>
               </td>
 
-              <!----------------¼Ó¼h/¾÷©Ğ--------------------------------------------------------------->
+              <!----------------æ¨“å±¤/æ©Ÿæˆ¿--------------------------------------------------------------->
               <td
                 align="right"
                 style="
-                  font-family: ¼Ğ·¢Åé;
+                  font-family: æ¨™æ¥·é«”;
                   font-size: large;
                   padding-left: 20px;
                 "
               >
-                <!-- ¼Ó¼h/¾÷©Ğ:
+                <!-- æ¨“å±¤/æ©Ÿæˆ¿:
                 <asp:DropDownList
                   ID="SelFloorArea"
                   runat="server"
@@ -165,39 +165,39 @@ Inherits="Diary_Process" %>
                   ID="SqlDataSourceFloorArea"
                   runat="server"
                   ConnectionString="<%$ ConnectionStrings:DiaryConnectionString %>"
-                  SelectCommand="select [Item],[Config] from [Config] where [Kind]='¼Ó¼h/¾÷©Ğ' order by [Mark],[Config]"
+                  SelectCommand="select [Item],[Config] from [Config] where [Kind]='æ¨“å±¤/æ©Ÿæˆ¿' order by [Mark],[Config]"
                 >
                 </asp:SqlDataSource
                 >&nbsp; -->
                 <asp:LinkButton
                   runat="server"
-                  tooltip="½Ğ¿é¤J±µ¦¬¨ì¨Æ¥ó¦Ü³B²zªº®É¶¡"
+                  tooltip="è«‹è¼¸å…¥æ¥æ”¶åˆ°äº‹ä»¶è‡³è™•ç†çš„æ™‚é–“"
                   onclientclick="return false"
                   Forecolor="#0000AC"
                   style="text-decoration: none"
-                  >³B²z®É¶¡:</asp:LinkButton
+                  >è™•ç†æ™‚é–“:</asp:LinkButton
                 >
                 <asp:TextBox
                   ID="txtPM"
                   runat="server"
-                  Width="50"
+                  Width="30"
                   ForeColor="Green"
                   CssClass="style0"
                 ></asp:TextBox>
-                ¤À
+                åˆ†
               </td>
 
-              <td align="right" style="font-family: ¼Ğ·¢Åé; font-size: large">
-                &nbsp;&nbsp;¥s­×®É¬q:
+              <td align="right" style="font-family: æ¨™æ¥·é«”; font-size: large">
+                &nbsp;&nbsp;å«ä¿®æ™‚æ®µ:
                 <asp:DropDownList ID="SelCall" runat="server" ForeColor="Green">
                   <asp:ListItem></asp:ListItem>
-                  <asp:ListItem Value="¤£¥Î">¤£¥Î</asp:ListItem>
-                  <asp:ListItem Value="¤W¯Z">¤W¯Z</asp:ListItem>
-                  <asp:ListItem Value="¤U¯Z">¤U¯Z</asp:ListItem>
-                  <asp:ListItem Value="¥b©]"
-                    >¥b©]</asp:ListItem
+                  <asp:ListItem Value="ä¸ç”¨">ä¸ç”¨</asp:ListItem>
+                  <asp:ListItem Value="ä¸Šç­">ä¸Šç­</asp:ListItem>
+                  <asp:ListItem Value="ä¸‹ç­">ä¸‹ç­</asp:ListItem>
+                  <asp:ListItem Value="åŠå¤œ"
+                    >åŠå¤œ</asp:ListItem
                   > </asp:DropDownList
-                >&nbsp;&nbsp; ºû­×¤H­û:
+                >&nbsp;&nbsp; ç¶­ä¿®äººå“¡:
                 <asp:TextBox
                   ID="txtMt"
                   runat="server"
@@ -216,7 +216,7 @@ Inherits="Diary_Process" %>
                   DynamicHorizontalOffset="2"
                   StaticEnableDefaultPopOutImage="false"
                   MaximumDynamicDisplayLevels="3"
-                  Font-Names="¼Ğ·¢Åé"
+                  Font-Names="æ¨™æ¥·é«”"
                   Font-Size="Small"
                   ForeColor="Black"
                   Orientation="Horizontal"
@@ -238,7 +238,7 @@ Inherits="Diary_Process" %>
                   <DynamicSelectedStyle BackColor="LightGreen" />
                   <StaticMenuItemStyle ForeColor="Green" />
                   <Items>
-                    <asp:MenuItem Text="¾É¤J"> </asp:MenuItem>
+                    <asp:MenuItem Text="å°å…¥"> </asp:MenuItem>
                   </Items>
                   <StaticHoverStyle BackColor="#666666" ForeColor="White" />
                   <StaticMenuItemStyle
@@ -249,7 +249,7 @@ Inherits="Diary_Process" %>
                 </asp:Menu>
               </td>
 
-              <td align="left" style="font-family: ¼Ğ·¢Åé">
+              <td align="left" style="font-family: æ¨™æ¥·é«”">
                 &nbsp;&nbsp;
                 <font
                   style="
@@ -261,8 +261,8 @@ Inherits="Diary_Process" %>
                   "
                 >
                   <u
-                    onclick="alert('1.»İ§e®Öªø©x¨Ñºû­×¤H­û¥[¯Z¥Ó½Ğ¤§¥Î\n\n2.¨Cµ§³B²z¹Lµ{¥u¯à°O¿ı¤@¦ìºû­×¤H­û¡A­Y¥s­×¼Æ¤H¡A½Ğ¤À¦æ°O¿ı\n\n3.¥s­×®É¬q¡G\n¤£¥Î¡G¤£¥Î¥s­×¡Aºû­×¤H­û½ĞªÅ¥Õ\n¤W¯Z¡G¤W¯Z®É¶¡\n¤U¯Z¡G06:00~23:00«D¤W¯Z®É¶¡\n¥b©]¡G23:00~06:00\n\n4.¥s­×®É¬q­Y«D¤£¥Î¡A«hºû­×¤H­û¥²¶ñ¡A¤Ï¤§¥çµM\n\n5.ºû­×¤H­û§Y³B²z¤H­û');"
-                    >»¡©ú</u
+                    onclick="alert('1.éœ€å‘ˆæ ¸é•·å®˜ä¾›ç¶­ä¿®äººå“¡åŠ ç­ç”³è«‹ä¹‹ç”¨\n\n2.æ¯ç­†è™•ç†éç¨‹åªèƒ½è¨˜éŒ„ä¸€ä½ç¶­ä¿®äººå“¡ï¼Œè‹¥å«ä¿®æ•¸äººï¼Œè«‹åˆ†è¡Œè¨˜éŒ„\n\n3.å«ä¿®æ™‚æ®µï¼š\nä¸ç”¨ï¼šä¸ç”¨å«ä¿®ï¼Œç¶­ä¿®äººå“¡è«‹ç©ºç™½\nä¸Šç­ï¼šä¸Šç­æ™‚é–“\nä¸‹ç­ï¼š06:00~23:00éä¸Šç­æ™‚é–“\nåŠå¤œï¼š23:00~06:00\n\n4.å«ä¿®æ™‚æ®µè‹¥éä¸ç”¨ï¼Œå‰‡ç¶­ä¿®äººå“¡å¿…å¡«ï¼Œåä¹‹äº¦ç„¶\n\n5.ç¶­ä¿®äººå“¡å³è™•ç†äººå“¡');"
+                    >èªªæ˜</u
                   >
                 </font>
               </td>
@@ -272,7 +272,7 @@ Inherits="Diary_Process" %>
       </tr>
 
       <tr>
-        <td align="left" style="font-size: large; font-family: ¼Ğ·¢Åé">
+        <td align="left" style="font-size: large; font-family: æ¨™æ¥·é«”">
           &nbsp;<asp:TextBox
             ID="txtProcess"
             name="txtProcess"
@@ -289,17 +289,17 @@ Inherits="Diary_Process" %>
 
       <tr>
         <td align="left" colspan="5">
-          <br />&nbsp;¦@¥ÎÄİ©Ê°Ï¡G
+          <br />&nbsp;å…±ç”¨å±¬æ€§å€ï¼š
           <hr />
         </td>
       </tr>
-      <!----------------¦@¥ÎÄİ©Ê--------------------------------------------------------------->
+      <!----------------å…±ç”¨å±¬æ€§--------------------------------------------------------------->
       <tr>
         <td
           align="left"
-          style="font-size: large; font-family: ¼Ğ·¢Åé; color: Red"
+          style="font-size: large; font-family: æ¨™æ¥·é«”; color: Red"
         >
-          &nbsp;®Ú¦]¨t²Î:
+          &nbsp;æ ¹å› ç³»çµ±:
           <asp:DropDownList
             ID="SelSysCode"
             runat="server"
@@ -317,10 +317,10 @@ Inherits="Diary_Process" %>
             ID="SqlDataSourceSysCode"
             runat="server"
             ConnectionString="<%$ ConnectionStrings:DiaryConnectionString %>"
-            SelectCommand="select [Item],[Config] from [Config] where [Kind]='¨t²Î¥N½X' order by [Mark],[Config]"
+            SelectCommand="select [Item],[Config] from [Config] where [Kind]='ç³»çµ±ä»£ç¢¼' order by [Mark],[Config]"
           >
           </asp:SqlDataSource
-          >&nbsp;&nbsp; ¸ê²£Ãş«¬:
+          >&nbsp;&nbsp; è³‡ç”¢é¡å‹:
           <asp:DropDownList
             ID="SelKind"
             runat="server"
@@ -336,10 +336,10 @@ Inherits="Diary_Process" %>
             ID="SqlDataSourceKind"
             runat="server"
             ConnectionString="<%$ ConnectionStrings:DiaryConnectionString %>"
-            SelectCommand="select [Item],[Config] from [Config] where [Kind]='°T®§ºØÃş' and [Mark]<>'z' order by [Mark]"
+            SelectCommand="select [Item],[Config] from [Config] where [Kind]='è¨Šæ¯ç¨®é¡' and [Mark]<>'z' order by [Mark]"
           >
           </asp:SqlDataSource
-          >&nbsp;&nbsp; ²§±`µ¥¯Å:
+          >&nbsp;&nbsp; ç•°å¸¸ç­‰ç´š:
           <asp:DropDownList
             ID="SelDegree"
             runat="server"
@@ -355,7 +355,7 @@ Inherits="Diary_Process" %>
             ID="SqlDataSourceDegree"
             runat="server"
             ConnectionString="<%$ ConnectionStrings:DiaryConnectionString %>"
-            SelectCommand="select [Item],[Config] from [Config] where [Kind]='²§±`µ¥¯Å' order by [Config]"
+            SelectCommand="select [Item],[Config] from [Config] where [Kind]='ç•°å¸¸ç­‰ç´š' order by [Config]"
           >
           </asp:SqlDataSource
           >&nbsp;
@@ -363,19 +363,19 @@ Inherits="Diary_Process" %>
           <font
             color="blue"
             size="2"
-            onclick="alert('¬õ¦âÄæ¦ì­t³d¤H¥i©ó²Î­p¤é´Á(¤U¤@¤ë5¤é)¤§«e­×§ï');"
+            onclick="alert('ç´…è‰²æ¬„ä½è² è²¬äººå¯æ–¼çµ±è¨ˆæ—¥æœŸ(ä¸‹ä¸€æœˆ5æ—¥)ä¹‹å‰ä¿®æ”¹');"
           >
-            <u style="cursor: pointer">´Á­­</u> </font
+            <u style="cursor: pointer">æœŸé™</u> </font
           >&nbsp;
-          <a href="../help/²§±`¨Æ¥óµ¥¯ÅÁ|¨Ò»¡©ú.txt" target="_blank"
-            ><font color="blue" size="2">»¡©ú</font></a
+          <a href="../help/ç•°å¸¸äº‹ä»¶ç­‰ç´šèˆ‰ä¾‹èªªæ˜.txt" target="_blank"
+            ><font color="blue" size="2">èªªæ˜</font></a
           >&nbsp;
         </td>
       </tr>
-      <!----------------°lÂÜ¤½§i--------------------------------------------------------------->
+      <!----------------è¿½è¹¤å…¬å‘Š--------------------------------------------------------------->
       <tr>
-        <td align="left" style="font-size: large; font-family: ¼Ğ·¢Åé">
-          <br />&nbsp;³B²zª¬ºA:
+        <td align="left" style="font-size: large; font-family: æ¨™æ¥·é«”">
+          <br />&nbsp;è™•ç†ç‹€æ…‹:
           <asp:DropDownList
             ID="SelStatus"
             runat="server"
@@ -392,10 +392,10 @@ Inherits="Diary_Process" %>
             ID="SqlDataSourceStatus"
             runat="server"
             ConnectionString="<%$ ConnectionStrings:DiaryConnectionString %>"
-            SelectCommand="select [Config],[Memo] from [Config] where [Kind]='³B²zª¬ºA' order by [Mark]"
+            SelectCommand="select [Config],[Memo] from [Config] where [Kind]='è™•ç†ç‹€æ…‹' order by [Mark]"
           >
           </asp:SqlDataSource
-          >&nbsp;&nbsp; ¤½§i´Á­­:
+          >&nbsp;&nbsp; å…¬å‘ŠæœŸé™:
           <asp:DropDownList
             ID="SelYYYY"
             runat="server"
@@ -403,7 +403,7 @@ Inherits="Diary_Process" %>
             AppendDataBoundItems="true"
           >
             <asp:ListItem></asp:ListItem> </asp:DropDownList
-          >¦~
+          >å¹´
           <asp:DropDownList
             ID="SelMM"
             runat="server"
@@ -411,7 +411,7 @@ Inherits="Diary_Process" %>
             AppendDataBoundItems="true"
           >
             <asp:ListItem></asp:ListItem> </asp:DropDownList
-          >¤ë
+          >æœˆ
           <asp:DropDownList
             ID="SelDD"
             runat="server"
@@ -419,30 +419,30 @@ Inherits="Diary_Process" %>
             AppendDataBoundItems="true"
           >
             <asp:ListItem></asp:ListItem> </asp:DropDownList
-          >¤é
+          >æ—¥
           <asp:DropDownList ID="SelClass" runat="server" ForeColor="Green">
             <asp:ListItem></asp:ListItem>
-            <asp:ListItem Value="1">¦­</asp:ListItem>
-            <asp:ListItem Value="2">¤È</asp:ListItem>
-            <asp:ListItem Value="3">±ß</asp:ListItem> </asp:DropDownList
-          >¯Z
+            <asp:ListItem Value="1">æ—©</asp:ListItem>
+            <asp:ListItem Value="2">åˆ</asp:ListItem>
+            <asp:ListItem Value="3">æ™š</asp:ListItem> </asp:DropDownList
+          >ç­
 
           <font
             color="blue"
             size="2"
             style="cursor: pointer"
-            onclick="alert('1. ±ı³]©w°lÂÜ©Îª¾ÃÑ¤½§i¡A½Ğ±N³B²zª¬ºA³]©w¬° [¦C°lÂÜ/ª¾ÃÑ¤½§i]\n'
-                                                         + '2. ª¾ÃÑ¤½§i¥ç»İ±N¦~´Á­­³]¬° [¥Ã¤[]\n'
-                                                         + '3. ¦³³]©w¤é´Á¤§°lÂÜ¤½§i¡A¨ì´Á·|¶À©³´£¥Ü¡A¥H«K°lÂÜ³B²z\n'
-                                                         + '4. ±ı±N°lÂÜ¤½§iµ²®×¡A½Ğ±N³B²zª¬ºA§ï¬° [¤½§i¤wµ²®×/¥¢®Ä]\n'
-                                                         + '5. ±ı¨Ïª¾ÃÑ¤½§i¥¢®Ä¡A½Ğ±N³B²zª¬ºA§ï¬° [¤½§i¤wµ²®×/¥¢®Ä]\n'
-                                                         + '6. °lÂÜµ²®×®É¡A¤½§i´Á­­ªº¹w³]­È¬O²{¦b·í¯Z¡A­Y§ï¦¨¥Ã¤[¡A·|ÅÜ¦¨¥¢®Ä¤§ª¾ÃÑ¤½§i\n'
-                                                         + '7. ±N³B²zª¬ºA³]¬° [(¥¼©wª¬ºA)]¡A·|¦P®ÉÅã¥Ü©ó°lÂÜ¤Îª¾ÃÑ¤½§i');"
-            >&nbsp; <u>»¡©ú</u> </font
+            onclick="alert('1. æ¬²è¨­å®šè¿½è¹¤æˆ–çŸ¥è­˜å…¬å‘Šï¼Œè«‹å°‡è™•ç†ç‹€æ…‹è¨­å®šç‚º [åˆ—è¿½è¹¤/çŸ¥è­˜å…¬å‘Š]\n'
+                                                         + '2. çŸ¥è­˜å…¬å‘Šäº¦éœ€å°‡å¹´æœŸé™è¨­ç‚º [æ°¸ä¹…]\n'
+                                                         + '3. æœ‰è¨­å®šæ—¥æœŸä¹‹è¿½è¹¤å…¬å‘Šï¼Œåˆ°æœŸæœƒé»ƒåº•æç¤ºï¼Œä»¥ä¾¿è¿½è¹¤è™•ç†\n'
+                                                         + '4. æ¬²å°‡è¿½è¹¤å…¬å‘Šçµæ¡ˆï¼Œè«‹å°‡è™•ç†ç‹€æ…‹æ”¹ç‚º [å…¬å‘Šå·²çµæ¡ˆ/å¤±æ•ˆ]\n'
+                                                         + '5. æ¬²ä½¿çŸ¥è­˜å…¬å‘Šå¤±æ•ˆï¼Œè«‹å°‡è™•ç†ç‹€æ…‹æ”¹ç‚º [å…¬å‘Šå·²çµæ¡ˆ/å¤±æ•ˆ]\n'
+                                                         + '6. è¿½è¹¤çµæ¡ˆæ™‚ï¼Œå…¬å‘ŠæœŸé™çš„é è¨­å€¼æ˜¯ç¾åœ¨ç•¶ç­ï¼Œè‹¥æ”¹æˆæ°¸ä¹…ï¼Œæœƒè®Šæˆå¤±æ•ˆä¹‹çŸ¥è­˜å…¬å‘Š\n'
+                                                         + '7. å°‡è™•ç†ç‹€æ…‹è¨­ç‚º [(æœªå®šç‹€æ…‹)]ï¼ŒæœƒåŒæ™‚é¡¯ç¤ºæ–¼è¿½è¹¤åŠçŸ¥è­˜å…¬å‘Š');"
+            >&nbsp; <u>èªªæ˜</u> </font
           >&nbsp;
         </td>
       </tr>
-      <!----------------¦s¡@ÀÉ--------------------------------------------------------------->
+      <!----------------å­˜ã€€æª”--------------------------------------------------------------->
       <tr>
         <td align="right" colspan="5">
           <br />
@@ -460,7 +460,7 @@ Inherits="Diary_Process" %>
               OnSelectedIndexChanged="MoveTour_Changed"
             >
             </asp:DropDownList
-            >¦~&nbsp;
+            >å¹´&nbsp;
 
             <asp:DropDownList
               ID="SelMoveMM"
@@ -470,7 +470,7 @@ Inherits="Diary_Process" %>
               OnSelectedIndexChanged="MoveTour_Changed"
             >
             </asp:DropDownList
-            >¤ë&nbsp;
+            >æœˆ&nbsp;
 
             <asp:DropDownList
               ID="SelMoveDD"
@@ -480,7 +480,7 @@ Inherits="Diary_Process" %>
               OnSelectedIndexChanged="MoveTour_Changed"
             >
             </asp:DropDownList
-            >¤é&nbsp;
+            >æ—¥&nbsp;
 
             <asp:DropDownList
               ID="SelMoveClass"
@@ -489,10 +489,10 @@ Inherits="Diary_Process" %>
               AutoPostBack="true"
               OnSelectedIndexChanged="MoveTour_Changed"
             >
-              <asp:ListItem Value="1">¦­</asp:ListItem>
-              <asp:ListItem Value="2">¤È</asp:ListItem>
-              <asp:ListItem Value="3">±ß</asp:ListItem> </asp:DropDownList
-            >¯Z &nbsp;&nbsp;
+              <asp:ListItem Value="1">æ—©</asp:ListItem>
+              <asp:ListItem Value="2">åˆ</asp:ListItem>
+              <asp:ListItem Value="3">æ™š</asp:ListItem> </asp:DropDownList
+            >ç­ &nbsp;&nbsp;
 
             <asp:DropDownList
               ID="SelDiaryNo"
@@ -513,14 +513,14 @@ Inherits="Diary_Process" %>
             <asp:Button
               ID="BtnMove"
               runat="server"
-              Text="½T©w²¾¤J"
+              Text="ç¢ºå®šç§»å…¥"
               OnClick="BtnMove_Click"
-              ToolTip="­Y¶È¦³¤@µ§³B²z¹Lµ{¡A«h³s±a§R°£­ì¤é»xª¬ºA¤Î°T®§¸ê°T¡C"
+              ToolTip="è‹¥åƒ…æœ‰ä¸€ç­†è™•ç†éç¨‹ï¼Œå‰‡é€£å¸¶åˆªé™¤åŸæ—¥èªŒç‹€æ…‹åŠè¨Šæ¯è³‡è¨Šã€‚"
             />&nbsp;&nbsp;
             <asp:Button
               ID="BtnCancel"
               runat="server"
-              Text="¨ú®ø"
+              Text="å–æ¶ˆ"
               OnClick="BtnCancel_Click"
             />&nbsp;&nbsp;
           </asp:Panel>
@@ -533,20 +533,20 @@ Inherits="Diary_Process" %>
               Font-Size="Small"
               ForeColor="Blue"
               OnClick="LinkMove_Click"
-              ToolTip="­Y¶È¦³¤@µ§³B²z¹Lµ{¡A«h³s±a§R°£­ì¤é»xª¬ºA¤Î°T®§¸ê°T¡C"
-              >±N³B²z¹Lµ{²¾¦Ü ...</asp:LinkButton
+              ToolTip="è‹¥åƒ…æœ‰ä¸€ç­†è™•ç†éç¨‹ï¼Œå‰‡é€£å¸¶åˆªé™¤åŸæ—¥èªŒç‹€æ…‹åŠè¨Šæ¯è³‡è¨Šã€‚"
+              >å°‡è™•ç†éç¨‹ç§»è‡³ ...</asp:LinkButton
             >&nbsp;&nbsp;&nbsp;&nbsp;
             <asp:Button
               ID="BtnSave"
               runat="server"
-              Text="¡@¦s¡@ÀÉ¡@"
+              Text="ã€€å­˜ã€€æª”ã€€"
               Font-Size="Large"
               OnClick="BtnSave_Click"
             />&nbsp;&nbsp;&nbsp;&nbsp;
             <asp:Button
               ID="BtnExit"
               runat="server"
-              Text="¡@Â÷¡@¶}¡@"
+              Text="ã€€é›¢ã€€é–‹ã€€"
               Font-Size="Large"
               OnClick="BtnExit_Click"
             />&nbsp;&nbsp;

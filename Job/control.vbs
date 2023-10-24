@@ -1,4 +1,4 @@
-on error resume next '寧無作用,不可出錯,以免hung住
+on error resume next	'寧無作用,不可出錯,以免hung住 ===> 工作日誌匯入當班設備人員進出訊息
 '資料庫連結-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 set objWShell = CreateObject("WScript.Shell")
 'SVexe="sos-vm16"
@@ -207,10 +207,10 @@ function GetDiaryNo(qryTour,MsgCode)
 end function
 '---------------刪除門禁資料---------------------------------------------------------
 function DelControl(qryTour,DiaryNo)
-  'WScript.Echo "delete from Process where tour='" & qryTour & "' and DiaryNo='" & DiaryNo & "'"
+  'WScript.Echo "delete from Msg where tour='" & qryTour & "' and DiaryNo=" & DiaryNo
   connDiary.execute "delete from Process where tour='" & qryTour & "' and DiaryNo='" & DiaryNo & "'"
-  connDiary.execute "delete from Msg where tour='" & qryTour & "' and DiaryNo=" & DiaryNo
-  connDiary.execute "delete from Diary where tour='" & qryTour & "' and DiaryNo=" & DiaryNo
+  connDiary.execute "delete from Msg where tour='" & qryTour & "' and DiaryNo='" & DiaryNo & "'"
+  connDiary.execute "delete from Diary where tour='" & qryTour & "' and DiaryNo='" & DiaryNo & "'"
 end function
 '---------------新增門禁資料---------------------------------------------------------
 function InsControl(qryTour,MsgCode,MsgText,ProText)
@@ -220,5 +220,5 @@ function InsControl(qryTour,MsgCode,MsgText,ProText)
   ProcessNo=GetSerial(qryTour,"Process","ProcessNo","",0)
   connDiary.execute "insert into Diary values('" & qryTour & "'," & DiaryNo & ",'" & nowDT & "','" & nowDT & "',0,'',0,'" & mid(MsgCode,2,3) & "','" & mid(MsgCode,5,1) & "','','','')"
   connDiary.execute "insert into Msg values('" & qryTour & "'," & DiaryNo & "," & MsgNo & ",'" & nowDT & "','" & nowDT & "','" & MsgCode & "','" & MsgText & "',0)"
-  connDiary.execute "insert into Process values('" & qryTour & "'," & DiaryNo & "," & ProcessNo & ",'" & nowDT & "','" & nowDT & "','" & ProText & "','SOS','operator','電腦操作課','機房OP','')" 
+  connDiary.execute "insert into Process values('" & qryTour & "'," & DiaryNo & "," & ProcessNo & ",'" & nowDT & "','" & nowDT & "','" & ProText & "','SOS','operator','作業管理科','機房OP','', 0)" 
 end function

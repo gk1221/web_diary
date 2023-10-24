@@ -56,7 +56,8 @@ public partial class Diary_Sign : System.Web.UI.Page
         if (!IsPostBack)
         {
             //取得當班OP資訊
-            string OPs = GetValue("Diary", "select [OPname] from [Sign] where [tour]='" + Session["tour"].ToString() + "'");
+            //string OPs = GetValue("Diary", "select [OPname] from [Sign] where [tour]='" + Session["tour"].ToString() + "'");
+            string OPs = GetValue("Diary", "select [OPname] from [Sign] where [tour]= @tour", "tour", Session["tour"].ToString());
             string op = "";
             for (int i = 0; i < GridView1.Rows.Count; i++)
             {
@@ -125,6 +126,18 @@ public partial class Diary_Sign : System.Web.UI.Page
         string cfg = ""; if (dr.Read()) cfg = dr[0].ToString();
         cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
 
+        return (cfg);
+    }
+
+    protected string GetValue(string DB, string SQL, string key, string value)   //取得單一資料
+    {
+        SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings[DB + "ConnectionString"].ConnectionString);
+        Conn.Open();
+        SqlCommand cmd = new SqlCommand(SQL, Conn);
+        cmd.Parameters.AddWithValue(key, value);
+        SqlDataReader dr = cmd.ExecuteReader();
+        string cfg = ""; if (dr.Read()) cfg = dr[0].ToString();
+        cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
         return (cfg);
     }
 
@@ -222,7 +235,7 @@ public partial class Diary_Sign : System.Web.UI.Page
 
 			ExecDbSQL("delete from [diary] where [tour]='" + tour + "' and [DiaryNo]=0");
 			ExecDbSQL("delete from [Msg] where [tour]='" + tour + "' and [DiaryNo]=0");
-			ExecDbSQL("insert into [diary] values('" + tour + "',0,'" + DiaryDT + "','" + nowDT + "',0,'',0,'***','f', NULL, NULL, NULL, NULL)");
+			ExecDbSQL("insert into [diary] values('" + tour + "',0,'" + DiaryDT + "','" + nowDT + "',0,'',0,'***','f', NULL, NULL, NULL)");
 
 			string WeekDay = DateTime.Parse(DiaryDT).DayOfWeek.ToString("d"); if (WeekDay == "0") WeekDay = "7";
 			string SQL = "select * from [Clock] where [WorkYN]='Y' and [RoutYN]='Y'" 
@@ -271,11 +284,11 @@ public partial class Diary_Sign : System.Web.UI.Page
 					MsgNo = GetValue("Diary", "select max([MsgNo])+1 from [Msg] where [tour]='" + tour + "'"); if (MsgNo == "") MsgNo = "1";
 					ProcessNo = GetValue("Diary", "select max([ProcessNo])+1 from [Process] where [tour]='" + tour + "'"); if (ProcessNo == "") ProcessNo = "1";
 
-					ExecDbSQL("insert into [Diary] values('" + tour + "'," + DiaryNo + ",'" + DiaryDT + "','" + nowDT + "',0,'',0,'992','d', NULL, NULL, NULL, NULL)");
+					ExecDbSQL("insert into [Diary] values('" + tour + "'," + DiaryNo + ",'" + DiaryDT + "','" + nowDT + "',0,'',0,'992','d', NULL, NULL, NULL)");
 					ExecDbSQL("insert into [Msg] values('" + tour + "'," + DiaryNo + "," + MsgNo + ",'" + DiaryDT + "','" + nowDT + "','" + THCode + "','"+ SopMsg + "',0)");
 					ExecDbSQL("insert into [Process] values('" + tour + "'," + DiaryNo + "," + ProcessNo + ",'" + DiaryDT + "','" + nowDT
 						+ "','" + strTH + "','" + Request.Cookies["UnitID"].Value + "','" + Request.Cookies["UserID"].Value + "','" 
-						+ HttpUtility.UrlDecode(Request.Cookies["UnitName"].Value) + "','" + HttpUtility.UrlDecode(Request.Cookies["UserName"].Value) + "', '')");
+						+ HttpUtility.UrlDecode(Request.Cookies["UnitName"].Value) + "','" + HttpUtility.UrlDecode(Request.Cookies["UserName"].Value) + "', '', '')");
 				}
 			}
 
@@ -289,12 +302,12 @@ public partial class Diary_Sign : System.Web.UI.Page
 					MsgNo = GetValue("Diary", "select max([MsgNo])+1 from [Msg] where [tour]='" + tour + "'"); if (MsgNo == "") MsgNo = "1";
 					ProcessNo = GetValue("Diary", "select max([ProcessNo])+1 from [Process] where [tour]='" + tour + "'"); if (ProcessNo == "") ProcessNo = "1";
 
-					ExecDbSQL("insert into [Diary] values('" + tour + "'," + DiaryNo + ",'" + DiaryDT + "','" + nowDT + "',0,'',0,'992','d', NULL, NULL, NULL, NULL)");
+					ExecDbSQL("insert into [Diary] values('" + tour + "'," + DiaryNo + ",'" + DiaryDT + "','" + nowDT + "',0,'',0,'992','d', NULL, NULL, NULL)");
 					ExecDbSQL("insert into [Msg] values('" + tour + "'," + DiaryNo + "," + MsgNo + ",'" + DiaryDT + "','" + nowDT + "','" + RoutCode + "','" + SopMsg + "',0)");
 					string strRout = GetValue("Diary", "select [Memo] from [Config] where [Kind]='導入詞彙' and [Mark]='841'");
 					ExecDbSQL("insert into [Process] values('" + tour + "'," + DiaryNo + "," + ProcessNo + ",'" + DiaryDT + "','" + nowDT
 						+ "','" + strRout + "','" + Request.Cookies["UnitID"].Value + "','" + Request.Cookies["UserID"].Value + "','" 
-						+ HttpUtility.UrlDecode(Request.Cookies["UnitName"].Value) + "','" + HttpUtility.UrlDecode(Request.Cookies["UserName"].Value) + "', '')");
+						+ HttpUtility.UrlDecode(Request.Cookies["UnitName"].Value) + "','" + HttpUtility.UrlDecode(Request.Cookies["UserName"].Value) + "', '', '')");
 					ExecDbSQL("delete from [Msg] where [tour]='" + tour + "' and [DiaryNo]=0 and [MsgCode]='" + RoutCode + "'");
 				}
 			}
