@@ -56,7 +56,8 @@ public partial class Diary_Sign : System.Web.UI.Page
         if (!IsPostBack)
         {
             //取得當班OP資訊
-            string OPs = GetValue("Diary", "select [OPname] from [Sign] where [tour]='" + Session["tour"].ToString() + "'");
+            //string OPs = GetValue("Diary", "select [OPname] from [Sign] where [tour]='" + Session["tour"].ToString() + "'");
+            string OPs = GetValue("Diary", "select [OPname] from [Sign] where [tour]= @tour", "tour", Session["tour"].ToString());
             string op = "";
             for (int i = 0; i < GridView1.Rows.Count; i++)
             {
@@ -125,6 +126,18 @@ public partial class Diary_Sign : System.Web.UI.Page
         string cfg = ""; if (dr.Read()) cfg = dr[0].ToString();
         cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
 
+        return (cfg);
+    }
+
+    protected string GetValue(string DB, string SQL, string key, string value)   //取得單一資料
+    {
+        SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings[DB + "ConnectionString"].ConnectionString);
+        Conn.Open();
+        SqlCommand cmd = new SqlCommand(SQL, Conn);
+        cmd.Parameters.AddWithValue(key, value);
+        SqlDataReader dr = cmd.ExecuteReader();
+        string cfg = ""; if (dr.Read()) cfg = dr[0].ToString();
+        cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
         return (cfg);
     }
 
