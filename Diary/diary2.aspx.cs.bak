@@ -1,0 +1,554 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+using System.Web.Configuration;
+using System.Data;
+using System.Data.SqlClient;
+
+public partial class Diary_diary : System.Web.UI.Page
+{
+    protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!IsPostBack)
+        {
+            //取得起始班別，並記錄狀態資訊
+            string tour = GetTour("", 0);
+            if (Session["tour"] != null) tour = Session["tour"].ToString();
+            if (Request["tour"] != null) tour = Request["tour"].ToString(); //OP上下一班，故不可刪
+            Session["tour"] = tour;
+
+
+            string qryTour = "", DiaryNo = "", MsgNo = "", MsgDT = "", ProcessNo = "", DBaction = "";
+            if (Request["qryTour"] != null) qryTour = Request["qryTour"].ToString();
+            if (Request["DiaryNo"] != null) DiaryNo = Request["DiaryNo"].ToString();
+            if (Request["MsgNo"] != null) MsgNo = Request["MsgNo"].ToString();
+            if (Request["MsgDT"] != null) MsgDT = Request["MsgDT"].ToString();
+            if (Request["ProcessNo"] != null) ProcessNo = Request["ProcessNo"].ToString();
+            if (Request["DBaction"] != null) DBaction = Request["DBaction"].ToString();
+
+            //異動區
+            switch (DBaction)
+            {
+                case "d":   //刪除發生訊息(僅機房可)或處理過程
+                    {
+                        if (ProcessNo != "")	//刪除處理過程 
+                        {
+                            string UnitID = GetValue("Diary", "select [UnitID] from [Process] where [tour]='" + qryTour + "' and [ProcessNo]=" + ProcessNo);
+                            if (UnitID != "")
+                            {   //登入課別須為記錄課別或機房
+                                if (Request.Cookies["UnitID"].Value.ToString() == "SOS" | Request.Cookies["UnitID"].Value.ToString() == UnitID)
+                                {   //僅剩一筆處理過程
+                                    if (int.Parse(GetValue("Diary", "select count(*) from [Process] where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo)) == 1)
+                                    {
+                                        ExecDbSQL("delete from [Msg] where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo);
+                                        ExecDbSQL("delete from [Diary] where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo);
+                                    }
+                                    InsProcessLog(qryTour, ProcessNo);  //超過半天需異動記錄 (需在刪除Process之前執行)
+
+                                    ExecDbSQL("delete from [Process] where [tour]='" + qryTour + "' and [ProcessNo]=" + ProcessNo);
+                                    ExecDbSQL("delete from [CallMt] where [班別]='" + qryTour + "' and [處理編號]=" + ProcessNo);
+                                }
+                                else AddMsg("<script>alert('您不能刪除別課同仁所輸入的資料！');</script>");
+                            }
+                        }
+                        //else if (MsgNo != "" & Request.Cookies["UnitID"].Value.ToString() == "SOS")   //刪除發生訊息(僅機房可)	
+                        else if (MsgNo != "")  //************************支援負責人輪班開放權限
+                        {
+                            //刪除最後一筆發生訊息記錄時一併刪除此一整筆日誌相關記錄
+                            if (int.Parse(GetValue("Diary", "select count(*) from [Msg] where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo)) == 1)
+                            {
+                                ExecDbSQL("delete from [Process] where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo);
+                                ExecDbSQL("delete from [Diary] where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo);
+                                ExecDbSQL("delete from [CallMt] where [班別]='" + qryTour + "' and [日誌編號]=" + DiaryNo);
+                            }
+                            ExecDbSQL("delete from [Msg] where [tour]='" + qryTour + "' and [MsgNo]=" + MsgNo);
+                        }
+                        else AddMsg("<script>alert('請通知機房刪除此訊息！');</script>");
+                        break;
+                    }
+                case "t":	//改變訊息時間
+                    {
+                        if (MsgDT.Length != 16) AddMsg("<script>alert('訊息時間格式錯誤！');</script>");
+                        else ExecDbSQL("Update [Msg] set [MsgDT]='" + MsgDT + "',[SaveDT]='" + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + "' where [tour]='" + qryTour + "' and [MsgNo]='" + MsgNo + "'");
+
+                        break;
+                    }
+            }
+        }
+    }
+
+    protected void InsProcessLog(string qryTour, string ProcessNo)  //刪除處理過程異動記錄
+    {
+        string SaveDT = GetValue("Diary", "select [SaveDT] from [Process] where [tour]='" + qryTour + "' and [ProcessNo]=" + ProcessNo);
+        string ProcessDT = GetValue("Diary", "select [ProcessDT] from [Process] where [tour]='" + qryTour + "' and [ProcessNo]=" + ProcessNo);
+        string ProText = GetValue("Diary", "select [ProText] from [Process] where [tour]='" + qryTour + "' and [ProcessNo]=" + ProcessNo);
+        if (ProText.IndexOf("@@") < 0 & DateTime.Now.AddHours(-12).ToString("yyyy/MM/dd HH:mm").CompareTo(SaveDT) > 0)
+        {
+            string PkNo = GetValue("Diary", "select max([記錄編號])+1 from [異動記錄]"); if (PkNo == "") PkNo = "1";
+            string strLog = "刪除 => " + ProcessDT + " " + ProText;
+            string UserName = HttpUtility.UrlDecode(Request.Cookies["UserName"].Value);
+
+            ExecDbSQL("insert into [異動記錄] values(" + PkNo + ",'處理過程','" + qryTour + "." + ProcessNo + "','" + strLog.Replace("'", "''")
+                + "','" + UserName + "','" + DateTime.Now.ToString("yyyy/MM/dd HH:mm") + "','" + Request.ServerVariables["REMOTE_ADDR"].ToString() + "')");
+        }
+    }
+
+    protected void Page_PreRenderComplete(object sender, EventArgs e)   //放Page_Load無法顯示
+    {
+
+    }
+
+    protected string GetValue(string DB, string SQL)   //取得單一資料
+    {
+        SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings[DB + "ConnectionString"].ConnectionString);
+        Conn.Open();
+        SqlCommand cmd = new SqlCommand(SQL, Conn);
+        SqlDataReader dr = null;
+        dr = cmd.ExecuteReader();
+        string cfg = ""; if (dr.Read()) cfg = dr[0].ToString();
+        cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
+
+        return (cfg);
+    }
+
+    protected void ExecDbSQL(string SQL) //執行資料庫異動
+    {
+        SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["DiaryConnectionString"].ConnectionString);
+        Conn.Open();
+        SqlCommand cmd = new SqlCommand(SQL, Conn);
+        cmd.ExecuteNonQuery();
+        cmd.Cancel(); cmd.Dispose(); Conn.Close(); Conn.Dispose();
+    }
+
+    protected void AddMsg(string strMsg)
+    {
+        Literal Msg = new Literal();
+        Msg.Text = strMsg;
+        Page.Controls.Add(Msg);
+    }
+
+    protected string GetTour(string tour, int diff)   //取得班別，diff限1、0、-1
+    {
+        string TourOut = "", c = "3"; DateTime dt;
+
+        if (tour == "")
+        {
+            dt = DateTime.Now;
+            int hhmi = int.Parse(dt.ToString("HHmm"));
+
+            if (hhmi < 0730) dt = dt.AddDays(-1);
+            else if (hhmi >= 0730 & hhmi < 1530) c = "1";
+            else if (hhmi >= 1530 & hhmi < 1930) c = "2";
+        }
+        else
+        {
+            dt = DateTime.Parse(tour.Substring(0, 4) + "/" + tour.Substring(4, 2) + "/" + tour.Substring(6, 2));
+            c = tour.Substring(8, 1);
+        }
+
+        if (diff == 0) TourOut = dt.ToString("yyyyMMdd") + c;
+        else if (diff > 0)
+        {
+            if (c == "1") TourOut = dt.ToString("yyyyMMdd") + "2";
+            else if (c == "2") TourOut = dt.ToString("yyyyMMdd") + "3";
+            else TourOut = dt.AddDays(1).ToString("yyyyMMdd") + "1";
+        }
+        else
+        {
+            if (c == "3") TourOut = dt.ToString("yyyyMMdd") + "2";
+            else if (c == "2") TourOut = dt.ToString("yyyyMMdd") + "1";
+            else TourOut = dt.AddDays(-1).ToString("yyyyMMdd") + "3";
+        }
+
+        return (TourOut);
+    }
+
+    protected string DtToTour(string dt)   //時間轉班別
+    {
+        string tour = dt.Substring(0, 4) + dt.Substring(5, 2) + dt.Substring(8, 2);
+        int hhmi = int.Parse(dt.Substring(11, 2) + dt.Substring(14, 2));
+
+        if (hhmi < 0730) tour = GetTour(tour + "1", -1).Substring(0, 8) + "3";
+        else if (hhmi >= 0730 & hhmi < 1530) tour = tour + "1";
+        else if (hhmi >= 1530 & hhmi < 1930) tour = tour + "2";
+        else tour = tour + "3";
+
+        return (tour);
+    }
+
+    protected string GetTourSQL(string tour)   //取得班別SQL
+    {
+        string SQL = "", c = tour.Substring(8, 1);
+        string NowYMD = tour.Substring(0, 4) + "/" + tour.Substring(4, 2) + "/" + tour.Substring(6, 2);
+        string NextTour = GetTour(tour, 1);
+        string NextYMD = NextTour.Substring(0, 4) + "/" + NextTour.Substring(4, 2) + "/" + NextTour.Substring(6, 2);
+
+        if (c == "1") SQL = "'" + NowYMD + " 07:30:00' and '" + NowYMD + " 15:29:59'";
+        else if (c == "2") SQL = "'" + NowYMD + " 15:30:00' and '" + NowYMD + " 19:29:59'";
+        else SQL = "'" + NowYMD + " 19:30:00' and '" + NextYMD + " 07:29:59'";
+
+        return (SQL);
+    }
+
+    protected void FormatHead(string qryArea) //格式化日誌種類之表頭
+    {
+        //異動執行
+        string strAction = "<font size=\"3\" color=\"blue\">\n"
+            + "	    &nbsp;&nbsp;<u style=\"cursor:pointer\" onClick=\"Cmd_Click('" + qryArea + "','a')\" title=\"新增處理過程(亦可按[Ins]鍵)\">新增</u>\n"
+            + "	    &nbsp;&nbsp;<u style=\"cursor:pointer\" onClick=\"Cmd_Click('" + qryArea + "','u')\" title=\"修改處理過程(亦可Double Click)\">修改</u>\n"
+            + "	    &nbsp;&nbsp;<u style=\"cursor:pointer\" onClick=\"Cmd_Click('" + qryArea + "','d')\" title=\"刪除發生訊息或處理過程(亦可按[Del]鍵)；\n\n刪除該筆日誌最後一筆發生訊息或處理過程之後，\n整筆日誌記錄均將一併刪除！\n(包含屬性設定、發生訊息與處理過程)\">刪除</u>\n"
+            + "	    &nbsp;&nbsp;&nbsp;&nbsp;<u style=\"cursor:pointer\" title=\"先用滑鼠點選欲操作的資料列，再執行新增(Ins)修改(DbClick)或刪除(Del)\n\n滑鼠移至標題或連結文字可見提示訊息\n\n進一步說明可見系統設定->使用手冊\" onclick=\"alert(this.title);\">操作說明</u>\n"
+            + "	   </font>\n";
+
+        //日誌種類之標題
+        string HtmlMark = "";
+        string TipMark = "第一欄(日誌班別)：綠色表示有設公告期限，但尚未結案\n第二欄(時間)：以顏色區分修改日期，當日紅、星期綠、月內藍、年內黑、逾年灰、未來紫";
+        string td3 = "";
+        switch (qryArea)
+        {
+            case "Diary":
+                {
+                    TipMark = "第一欄(日誌編號)：以顏色區分異常等級，例行黑、一般綠、重大紫、資安紅、其它灰";
+                    HtmlMark = "<a name=\"Diary\"><font size=\"4\" face=\"標楷體\" color=\"white\" title=\"" + TipMark + "\" onclick=\"alert(this.title);\">當班日誌</font></a>";
+                    break;
+                }
+            case "Save":
+                {
+                    HtmlMark = "<a name=\"Save\"><font size=\"4\" face=\"標楷體\" color=\"white\" title=\"" + TipMark + "\" onclick=\"alert(this.title);\">當班更改</font></a>";
+                    break;
+                }
+            case "Trace":
+                {
+                    TipMark = TipMark + "\n第三欄(處理過程)：以顏色區分處理狀態，追蹤棕，永久綠，逾期黃、結案灰";
+                    HtmlMark = "<a name=\"Trace\"><font size=\"4\" face=\"標楷體\" color=\"white\" title=\"" + TipMark + "\n\n一般追蹤放最後修改後1週，永久追蹤放最後修改後1月\" onclick=\"alert(this.title);\">追蹤公告</font></a>";
+                    td3 = string.Format("<a style=\"background-color: #F0F0F0;border-radius: 5px;cursor:pointer;\" onclick=\"OrderClick();\">依{0}排序</a>", Convert.ToBoolean(Request.QueryString["order"]=="1")?"修改時間":"班別日期");
+
+                    break;
+                }
+        }
+
+        //整合一整列標頭
+        Response.Write(string.Format(
+            @"<table id=tbl{0} width=""99%"" border=""1"" topmargin=""0""
+            leftmargin=""0"" rightmargin=""0"" bottommargin=""0"" marginwidth=""0"" marginheight=""0""
+            cellpadding=""3"" cellspacing=""0"" bordercolor=""#FFFFFF"" style=""table-layout:fixed;word-wrap:break-word\"">
+             <tr height=""25"">
+            	<td colspan=""2"" width=""160"" align=""center"" background=""../image/bkgd-{1}.gif""> {2} </td>
+        	<td background=""../image/bkgd-{1}.gif"">
+              <div style=""display:flex;justify-content: space-between;"">
+              
+              <div>{4}</div>
+              <div>{3}</div>
+              </div>
+           </td>
+         </tr>", qryArea, Session["tour"].ToString().Substring(8, 1) , HtmlMark, strAction, td3));
+    }
+
+    //----------------------------格式化訊息記錄列----------------------------------------------------------------------------------------------------------------------
+    string DnoFlag = "0"; //使DiaryNo只出現一次
+    protected string FormatMsg(string qryArea, SqlDataReader dr)    //查詢區塊、欄位資訊
+    {
+        string MsgColor = "#002080";	//訊息顏色:深藍    
+        string strDiaryNo = "&nbsp;"; //第一欄：日誌編號，填入空白字元以顯示表格框
+        string strMsgDT = dr["訊息時間"].ToString().Substring(11);     //第二欄：訊息時間        
+        string MsgTour = DtToTour(dr["訊息時間"].ToString()); //訊息班別
+        string DtColor = "";   //訊息時間文字顏色
+        string strMsgCode;  //訊息代碼
+        string strFormatMsg = "";    //第三欄：發生訊息(全部，含前二欄)
+
+        //第一欄：日誌編號：第一筆才需填，其它空白以區別之；異常等級：例行黑、一般綠、重大紫、資安紅、其它灰
+        if (DnoFlag != dr["日誌編號"].ToString())
+        {
+            DnoFlag = dr["日誌編號"].ToString();
+            strDiaryNo = "<font title=\"日誌時間：" + dr["日誌時間"].ToString() + "\n" + "存檔時間：" + dr["日誌存檔"].ToString()
+                + "\n" + "根因系統：" + dr["根因系統"].ToString() + "\n" + "資產類型：" + dr["資產類型"].ToString()
+                + "\n" + "異常等級：" + dr["異常等級"].ToString() + "\n" + "處理狀態：" + dr["狀態說明"].ToString()
+                + "\" color=\"" + dr["異常顏色"].ToString() + "\">" + DnoFlag.PadLeft(3, '0') + "</font>";
+        }
+
+        //第二欄：訊息時間
+        if (MsgTour.Substring(0, 8) != dr["日誌班別"].ToString().Substring(0, 8)) strMsgDT = MsgTour.Substring(4, 2) + "/" + MsgTour.Substring(6, 2);
+
+        //修改日期：當日紅(當班日誌除外)、星期綠、月內藍、月前灰、未來紫
+        string tour = Session["tour"].ToString();
+        string dt00 = DtToTour(dr["訊息存檔"].ToString());
+        string dt01 = DtToTour(DateTime.Parse(dr["訊息存檔"].ToString()).AddHours(24).ToString("yyyy/MM/dd HH:mm"));
+        string dt07 = DtToTour(DateTime.Parse(dr["訊息存檔"].ToString()).AddDays(7).ToString("yyyy/MM/dd HH:mm"));
+        string dt30 = DtToTour(DateTime.Parse(dr["訊息存檔"].ToString()).AddDays(30).ToString("yyyy/MM/dd HH:mm"));
+        string dt365 = DtToTour(DateTime.Parse(dr["訊息存檔"].ToString()).AddDays(365).ToString("yyyy/MM/dd HH:mm"));
+
+        if (qryArea == "Diary") DtColor = "Black"; //當班日誌除外
+        else if (dt00.CompareTo(tour) <= 0 & dt01.CompareTo(tour) >= 0) DtColor = "Red"; //當日修改顯示紅色 
+        else if (dt01.CompareTo(tour) < 0 & dt07.CompareTo(tour) >= 0) DtColor = "Green"; //一星期內修改顯示綠色 
+        else if (dt07.CompareTo(tour) < 0 & dt30.CompareTo(tour) >= 0) DtColor = "Blue"; //一月內修改顯示藍色 
+        else if (dt30.CompareTo(tour) < 0 & dt365.CompareTo(tour) >= 0) DtColor = "Black"; //一年內修改顯示黑色 
+        else if (dt365.CompareTo(tour) < 0) DtColor = "Gray"; //一年前修改顯示灰色 
+        else if (dt00.CompareTo(tour) > 0) DtColor = "#9900CC"; //當班後修改顯示紫色 
+        else DtColor = "Yellow"; //其它狀況顯示黃色 
+
+        strMsgDT = "<font color=\"" + DtColor + "\" title=\"訊息時間：" + dr["訊息時間"].ToString() + "\n" + "存檔時間：" + dr["訊息存檔"].ToString() + "\n\">" + strMsgDT + "</font>";
+
+        //第三欄：發生訊息(全部，含前二欄)
+        strMsgCode = "<font color=\"blue\">"
+            + "<u onClick=\"window.open('/sop/sop.asp?SEL_Code=" + dr["訊息代碼"].ToString() + "','_blank');\" style=\"cursor:pointer;\">" + dr["訊息代碼"].ToString() + "</u>"
+            + "</font>";
+
+        //mouseover後原本的異動顏色(即選取顏色)就會消失,若要維持不變,會很麻煩,且會和trClick()混淆
+        strFormatMsg = "<tr style=\"color:" + MsgColor + ";\""
+            + " onclick=\"trClick('" + qryArea + "','Msg',this.rowIndex,'" + dr["日誌班別"].ToString() + "','" + dr["日誌編號"].ToString() + "','" + dr["訊息編號"].ToString() + "','" + dr["訊息時間"].ToString() + "','','" + dr["訊息代碼"].ToString() + "','" + dr["異常顏色"].ToString() + "');\"" + "\n"
+            + " ondblclick=\"MsgDT_Click('" + dr["日誌班別"].ToString() + "','" + dr["訊息編號"].ToString() + "','" + dr["訊息代碼"].ToString() + "','" + dr["訊息時間"].ToString() + "');\"" + "\n"
+            + " onmouseover=\"this.style.color='blue';\" onmouseout=\"this.style.color='#002080';\">" + "\n"
+            + "<td align=\"center\" width=\"80\">" + strDiaryNo + "</td>" + "\n"
+            + "<td align=\"center\" width=\"80\">" + strMsgDT + "</td>" + "\n"
+            + "<td align=\"left\">(" + strMsgCode + ") " + dr["發生訊息"].ToString() + " " + GetCount("Msg", dr["日誌班別"].ToString(), dr["訊息代碼"].ToString()) + "</td>" + "\n"
+            + "</tr>";
+
+        return (strFormatMsg);
+    }
+
+    //----------------------------取得統計資訊----------------------------------------------------------------------------------------------------------------------
+    protected string GetCount(string kind, string tour, string x)
+    {
+        string Count30 = "0", Count365 = "0";
+        string tour30 = DtToTour(DateTime.Parse(tour.Substring(0, 4) + "/" + tour.Substring(4, 2) + "/" + tour.Substring(6, 2)).AddDays(-30).ToString("yyyy/MM/dd HH:mm"));
+        string tour365 = DtToTour(DateTime.Parse(tour.Substring(0, 4) + "/" + tour.Substring(4, 2) + "/" + tour.Substring(6, 2)).AddDays(-365).ToString("yyyy/MM/dd HH:mm"));
+
+        if (kind == "Msg")
+        {
+            if (GetValue("Diary","select [Item] from [Config] where Kind='排除次數' and [Config]='" + x + "'")=="")    //排除例行工作及門禁自動導入
+            {
+                Count30 = GetValue("Diary", "select count(*) from [Msg] where [MsgCode]='" + x + "' and [tour] between '" + tour30 + "' and '" + tour + "'");
+                Count365 = GetValue("Diary", "select count(*) from [Msg] where [MsgCode]='" + x + "' and [tour] between '" + tour365 + "' and '" + tour + "'");
+            }
+        }
+        else
+        {
+            Count30 = GetValue("Diary", "select count(*) from [Diary] where [" + kind + "]='" + x + "' and [tour] between '" + tour30 + "' and '" + tour + "'");
+            Count365 = GetValue("Diary", "select count(*) from [Diary] where [" + kind + "]='" + x + "' and [tour] between '" + tour365 + "' and '" + tour + "'");
+        }
+
+        return ("：" + Count30 + "/" + Count365);
+    }
+
+    //----------------------------格式化處理過程列----------------------------------------------------------------------------------------------------------------------
+    string tmpQryPK = ""; //判斷是否為第一次出現之處理過程記錄
+    protected string FormatProcess(string qryArea, SqlDataReader dr)    //查詢區塊、欄位資訊
+    {
+        string ProColor = "";     //處理過程文字顏色
+        string WarnColor = "";    //處理過程背景顏色
+        string DtColor = "";   //處理時間文字顏色
+        string strQryTour = "&nbsp;";   //第一欄：日誌班別，填入空白字元以顯示表格框
+        string strProDT = dr["處理時間"].ToString().Substring(11);     //第二欄：處理時間
+        string ProTour = DtToTour(dr["處理時間"].ToString()); //處理班別
+        string strFormatProcess = "";    //第三欄：處理過程(全部，含前二欄)
+        string TraceColor = ""; //有設追蹤且未過期則顯示綠色
+
+
+        //第一欄：日誌班別：查詢區塊非[當班日誌] 且為第一筆才需填，其它空白以區別之
+        if (qryArea != "Diary" & (tmpQryPK != dr["日誌班別"].ToString() + " " + dr["日誌編號"].ToString()))
+        {
+            if (dr["公告期限"].ToString().Trim().Length > 0 & dr["狀態代碼"].ToString() != "2") TraceColor = "Green";   //公告期限：有設但尚未結案綠(當班日誌看不到)
+
+            strQryTour = "<u title=\"日誌時間：" + dr["日誌時間"].ToString() + "\n存檔時間：" + dr["日誌存檔"].ToString()
+                + "\n日誌編號：" + dr["日誌編號"].ToString().PadLeft(3, '0')
+                + "\n根因系統：" + dr["根因系統"].ToString() + "\n" + "資產類型：" + dr["資產類型"].ToString()
+                + "\n異常等級：" + dr["異常等級"].ToString() + "\n" + "處理狀態：" + dr["狀態說明"].ToString()
+                + "\n公告期限：" + dr["公告期限"].ToString() + "\" onClick=\"TourClick('" + dr["日誌班別"].ToString()                     
+                + "');\" style=\"cursor:hand;color:" + TraceColor + "\">" + dr["日誌班別"].ToString() + "</u>";
+
+            tmpQryPK = dr["日誌班別"].ToString() + " " + dr["日誌編號"].ToString();   // 用以判斷是否第一筆
+        }
+
+        //第二欄：處理時間：處理班別日期與查詢班別日期不同，則顯示日期
+        if (ProTour.Substring(0, 8) != dr["日誌班別"].ToString().Substring(0, 8)) strProDT = ProTour.Substring(4, 2) + "/" + ProTour.Substring(6, 2);
+
+        //修改日期：當日紅、星期綠、月內藍、年內黑、年前灰、未來紫
+        string tour = Session["tour"].ToString();
+        string dt00 = DtToTour(dr["處理存檔"].ToString());
+        string dt01 = DtToTour(DateTime.Parse(dr["處理存檔"].ToString()).AddHours(24).ToString("yyyy/MM/dd HH:mm"));
+        string dt07 = DtToTour(DateTime.Parse(dr["處理存檔"].ToString()).AddDays(7).ToString("yyyy/MM/dd HH:mm"));
+        string dt30 = DtToTour(DateTime.Parse(dr["處理存檔"].ToString()).AddDays(30).ToString("yyyy/MM/dd HH:mm"));
+        string dt365 = DtToTour(DateTime.Parse(dr["處理存檔"].ToString()).AddDays(365).ToString("yyyy/MM/dd HH:mm"));
+
+        if (qryArea == "Diary") DtColor = "Black"; //當班日誌除外
+        else if (dt00.CompareTo(tour) <= 0 & dt01.CompareTo(tour) >= 0) DtColor = "Red"; //當日修改顯示紅色 
+        else if (dt00.CompareTo(tour) < 0 & dt07.CompareTo(tour) >= 0) DtColor = "Green"; //一星期內修改顯示綠色 
+        else if (dt07.CompareTo(tour) < 0 & dt30.CompareTo(tour) >= 0) DtColor = "Blue"; //一月內修改顯示藍色 
+        else if (dt30.CompareTo(tour) < 0 & dt365.CompareTo(tour) >= 0) DtColor = "Black"; //一年內修改顯示藍色 
+        else if (dt365.CompareTo(tour) < 0) DtColor = "Gray"; //一年前修改顯示灰色 
+        else if (dt00.CompareTo(tour) > 0) DtColor = "#9900CC"; //當班後修改顯示紫色 
+        else DtColor = "Yellow"; //其它狀況顯示黃色 
+
+
+        strProDT = "<font color=\"" + DtColor + "\" title=\"處理時間：" + dr["處理時間"].ToString() + "\n" //+ DtToTour(dr["處理存檔"].ToString()) + "\n"
+            + "存檔時間：" + dr["處理存檔"].ToString() + "\n"
+            + "叫修資訊：" + dr["叫修人員"].ToString() + " " + dr["叫修時段"].ToString() + "\n"
+            + "叫修存檔：" + dr["叫修存檔"].ToString() + " " + dr["叫修OP"].ToString() + "\n"
+            + "記錄人員：" + dr["單位名稱"].ToString() + "(" + dr["單位代號"].ToString() + ")\\" + dr["員工姓名"].ToString() + "(" + dr["員工代號"].ToString() + ")\">" + strProDT + "</font>";
+
+        //第三欄：處理過程(全部，含前二欄)
+        if (qryArea == "Trace")
+        {
+            if (dr["處理狀態"].ToString() == "追蹤" & dr["公告期限"].ToString().IndexOf("yyyy") < 0) ProColor = "brown";  //追蹤未到期顯示棕色
+            if (dr["處理狀態"].ToString() == "追蹤" & dr["公告期限"].ToString().IndexOf("yyyy") >= 0 | dr["處理狀態"].ToString() == "未定") ProColor = "green";  //永久追蹤或未定顯示綠色
+            if (dr["處理狀態"].ToString() == "結案") ProColor = "gray";    //已結案顯示灰色 
+            if ((dr["處理狀態"].ToString() == "追蹤" | dr["處理狀態"].ToString() == "未定") & Session["tour"].ToString().CompareTo(dr["公告期限"].ToString()) >= 0 & dr["公告期限"].ToString().Trim() != "") WarnColor = "#FFFFCC";  //追蹤逾期黃底提醒
+        }
+
+        //mouseover後原本的異動顏色(即選取顏色)就會消失,若要維持不變,會很麻煩,且會和trClick()混淆
+        strFormatProcess = "<tr ondblclick=\"trDblClick();\" style=\"background:" + WarnColor + "\""
+            + " onclick=\"trClick('" + qryArea + "','Process',this.rowIndex,'" + dr["日誌班別"].ToString() + "','" + dr["日誌編號"].ToString() + "','','','" + dr["處理編號"].ToString() + "','','" + ProColor + "');\">" + "\n"
+            + "<td align=\"center\" width=\"80\">" + strQryTour + "</td>" + "\n"
+            + "<td align=\"center\" width=\"80\">" + strProDT + "</td>" + "\n"
+            + "<td align=\"left\" style=\"color:" + ProColor + "\""
+            + " onmouseover=\"this.style.color='blue';\" onmouseout=\"this.style.color='" + ProColor + "';\"" + "\n"
+            + ">" + dr["處理過程"].ToString() + "</td>" + "\n"
+            + "</tr>";
+
+        return (strFormatProcess);
+    }
+
+    //----------------------------記錄(HTML)產生主控函數----------------------------------------------------------------------------------------------------------------------
+    protected void MainHTML(string qryArea, string SQL)
+    {
+        string strFormatMsg = "", strFormatProcess = "";    //每一行發生訊息或處理過程
+        int ProFlag = 0;    //ProFlag用於是否有處理過程之判斷
+        string strTourDiaryNo = "", strMsgNOs = "", strProNOs = "";    //避免重複取值的主鍵判斷字串
+
+        tmpQryPK = "";	//換區塊需歸零
+
+        SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["DiaryConnectionString"].ConnectionString);
+        Conn.Open();
+        SqlCommand cmd = new SqlCommand(SQL, Conn);
+        SqlDataReader dr = null;
+        dr = cmd.ExecuteReader();
+        while (dr.Read())
+        {
+            if (strTourDiaryNo != dr["日誌班別"].ToString() + " " + dr["日誌編號"].ToString())    //開始一筆新的日誌記錄	
+            {
+                if (strTourDiaryNo != "")  //顯示日誌記錄(第一筆記錄尚為空，故先不顯示)(植樹問題頭)
+                {
+                    if (qryArea == "Diary") Response.Write(strFormatMsg); //只有當班日誌顯示發生訊息                                
+                    if (ProFlag == 1)
+                    {
+                        Response.Write(strFormatProcess); //顯示處理過程
+                        //非當班日誌且有處理過程須顯示則隔行之(追蹤末可能空行，因末筆記錄可能濾掉；而其它不濾)
+                        Response.Write("<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>");
+                    }
+                    ProFlag = 0;
+                }
+                strTourDiaryNo = dr["日誌班別"].ToString() + " " + dr["日誌編號"].ToString();
+                strFormatMsg = ""; strFormatProcess = "";
+                strMsgNOs = ""; strProNOs = "";
+            }
+
+            if (qryArea == "Diary")//只有當班日誌顯示發生訊息 
+            {
+                if (strMsgNOs.IndexOf("," + dr["訊息編號"].ToString() + ",") < 0) //累計一筆記錄之發生訊息
+                {
+                    strMsgNOs = strMsgNOs + "," + dr["訊息編號"].ToString() + ",";
+                    strFormatMsg = strFormatMsg + "\n" + FormatMsg(qryArea, dr);
+                }
+            }
+
+            if (strProNOs.IndexOf("," + dr["處理編號"].ToString() + ",") < 0) //累計一筆記錄之處理過程 
+            {
+                strProNOs = strProNOs + "," + dr["處理編號"].ToString() + ",";
+                ProFlag = 1;
+                strFormatProcess = strFormatProcess + "\n" + FormatProcess(qryArea, dr);
+            }
+        }
+        cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
+
+        if (strTourDiaryNo != "")  //顯示日誌記錄(植樹問題尾)
+        {
+            if (qryArea == "Diary") Response.Write(strFormatMsg); //只有當班日誌顯示發生訊息                                
+            if (ProFlag == 1) Response.Write(strFormatProcess); //顯示處理過程
+        }
+        Response.Write("<tr><td width=\"80\">&nbsp;</td><td width=\"80\">&nbsp;</td><td>&nbsp;</td></tr>");
+    }
+
+    //----------------------------啟始函數----------------------------------------------------------------------------------------------------------------------
+    protected void MainDiary()    //當班日誌
+    {
+        FormatHead("Diary");
+
+        MainHTML("Diary", "select * from [View_工作日誌] where [日誌班別]='" + Session["tour"].ToString() + "' and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%') order by [日誌編號],[訊息時間],[處理時間]");
+
+        Response.Write("</table>");
+    }
+
+    protected void MainSave()    //當班更改
+    {
+        FormatHead("Save");
+
+        string SQL = "select A.* from [View_工作日誌] AS A,(select distinct [日誌班別],[日誌編號] from [View_工作日誌]"
+            + " where [日誌班別]<>'" + Session["tour"].ToString() + "' and [訊息代碼] not in ('2991f00','2991f02','1992d00')"
+			//+ "and not ([訊息代碼] = '1992d20')"
+			+ "and not ([訊息代碼] = '1992d20' and [日誌存檔] < [日誌時間])"
+            + " and [處理存檔] between " + GetTourSQL(Session["tour"].ToString())
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')"
+            + ") AS B where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')"
+            + " order by [日誌班別] desc,[日誌編號] desc,[處理時間]";
+        
+        MainHTML("Save", SQL);
+        Response.Write("</table>");
+    }
+
+    protected void MainTrace()    //追蹤公告
+    {
+        FormatHead("Trace");
+
+        string tour = Session["tour"].ToString();
+        DateTime dt00 = DateTime.Parse(tour.Substring(0, 4) + "/" + tour.Substring(4, 2) + "/" + tour.Substring(6, 2));
+        DateTime dt01 = dt00.AddDays(1);
+        DateTime dt07 = dt00.AddDays(-7);
+        DateTime dt30 = dt00.AddDays(-30);
+
+        //int order = Convert.ToInt32(Session["order"]);
+        int order =  Convert.ToInt32(Request.QueryString["order"]);
+        string SQL ="";
+        if(order == 1){
+            SQL= "select A.* , MAX([處理時間]) OVER(PARTITION BY A.[日誌班別], A.[日誌編號]) AS max_processing_time from [View_工作日誌] AS A,(select distinct [日誌班別],[日誌編號] from [View_處理過程]" 
+            + " where [狀態代碼]=3 or [狀態代碼]=1 and [公告期限] not like 'yyyy%' or [狀態代碼]=1 and [公告期限] like 'yyyy%'"
+            + " and ([日誌班別] between '" + dt30.ToString("yyyyMMdd") + tour.Substring(8, 1) + "' and '" + tour + "'"
+            + "  or  [處理存檔] between '" + dt30.ToString("yyyy/MM/dd HH:mm") + "' and '" + dt01.ToString("yyyy/MM/dd") + " 00:00')"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
+            + ") AS B where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
+            + " order by max_processing_time desc, [日誌班別] desc,[日誌編號] desc";
+        }else{
+        SQL = "select A.*  from [View_工作日誌] AS A,(select distinct [日誌班別],[日誌編號] from [View_處理過程]" 
+            + " where [狀態代碼]=3 or [狀態代碼]=1 and [公告期限] not like 'yyyy%' or [狀態代碼]=1 and [公告期限] like 'yyyy%'"
+            + " and ([日誌班別] between '" + dt30.ToString("yyyyMMdd") + tour.Substring(8, 1) + "' and '" + tour + "'"
+            + "  or  [處理存檔] between '" + dt30.ToString("yyyy/MM/dd HH:mm") + "' and '" + dt01.ToString("yyyy/MM/dd") + " 00:00')"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
+            + ") AS B where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
+            + " order by [日誌班別] desc,[日誌編號] desc,[處理時間]";
+        }
+        
+            
+        MainHTML("Trace", SQL);
+
+        //完成處理且7天內追蹤公告
+        MainHTML("Trace", "select A.* from [View_工作日誌] AS A,(select distinct [日誌班別],[日誌編號] from [View_處理過程]" 
+            + " where [狀態代碼]=2 and [公告期限] not like 'yyyy%'"
+            + " and ([公告期限] between '" + dt07.ToString("yyyyMMdd") + tour.Substring(8, 1) + "' and '" + tour + "'"
+            + " or [處理存檔] between '" + dt07.ToString("yyyy/MM/dd") + " 00:00' and '" + dt01.ToString("yyyy/MM/dd") + " 00:00')"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')"
+            + ") AS B where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
+            + " order by [日誌班別] desc,[日誌編號] desc,[處理時間]");
+
+        Response.Write("</table>");
+//here
+     //   Session["order"] = !Convert.ToBoolean( Session["order"]);
+
+        //Response.Write(SQL);
+    }
+}

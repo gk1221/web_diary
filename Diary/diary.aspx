@@ -1,5 +1,5 @@
 <%@ Page Title="當班日誌" Language="C#" MasterPageFile="../MasterPage.master" AutoEventWireup="true"
-    Debug="true" MaintainScrollPositionOnPostback="true" CodeFile="diary.aspx.cs"
+    Debug="true" MaintainScrollPositionOnPostback="true" CodeFile="diary.aspx.cs" trace="false"
     Inherits="Diary_diary" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
@@ -28,7 +28,16 @@
         function TourClick(qryTour) //移到qryTour當班的日誌
         {
             window.open("Diary.aspx?tour=" + qryTour, "_self");
-        } 
+        }
+
+        function OrderClick() //排序追蹤 here
+        {
+          const params = new URLSearchParams(window.location.search);
+
+          const id = params.get('order')==='1'?0 : 1;
+          
+            window.open("Diary.aspx?order=" + id, "_self");
+        }
 
         function MsgDT_Click(qryTour,MsgNo,MsgCode,qryMsgDT)
         {
