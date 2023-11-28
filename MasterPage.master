@@ -32,7 +32,7 @@
     </style>
 </head>
 <body runat="server" id="pMaster" style="width: 100%; margin: 0;" onkeydown="Cmd_KeyDown(event.keyCode);">
-    <form id="form1" runat="server">
+    <form id="form1" runat="server" name="form1">
     <asp:Table ID="tblHead" runat="server" Width="100%">
         <asp:TableRow runat="server" Height="50">
             <asp:TableCell runat="server" HorizontalAlign="Right" Style="background:;

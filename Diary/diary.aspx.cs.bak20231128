@@ -20,7 +20,6 @@ public partial class Diary_diary : System.Web.UI.Page
             if (Request["tour"] != null) tour = Request["tour"].ToString(); //OP上下一班，故不可刪
             Session["tour"] = tour;
 
-
             string qryTour = "", DiaryNo = "", MsgNo = "", MsgDT = "", ProcessNo = "", DBaction = "";
             if (Request["qryTour"] != null) qryTour = Request["qryTour"].ToString();
             if (Request["DiaryNo"] != null) DiaryNo = Request["DiaryNo"].ToString();
@@ -224,8 +223,7 @@ public partial class Diary_diary : System.Web.UI.Page
                 {
                     TipMark = TipMark + "\n第三欄(處理過程)：以顏色區分處理狀態，追蹤棕，永久綠，逾期黃、結案灰";
                     HtmlMark = "<a name=\"Trace\"><font size=\"4\" face=\"標楷體\" color=\"white\" title=\"" + TipMark + "\n\n一般追蹤放最後修改後1週，永久追蹤放最後修改後1月\" onclick=\"alert(this.title);\">追蹤公告</font></a>";
-                    td3 = string.Format("<a style=\"background-color: #F0F0F0;border-radius: 5px;cursor:pointer;\" onclick=\"OrderClick();\">依{0}排序</a>", Convert.ToBoolean(Request.QueryString["order"]=="1")?"修改時間":"班別日期");
-
+                    td3 = string.Format("<u style=\"color:#0000FF;border-radius: 5px;cursor:pointer;margin-left:5px\" onclick=\"OrderClick();\">依{0}排序▼</u>", Convert.ToBoolean(Request.QueryString["order"]=="1")?"修改時間":"班別日期");
                     break;
                 }
         }
@@ -239,9 +237,8 @@ public partial class Diary_diary : System.Web.UI.Page
             	<td colspan=""2"" width=""160"" align=""center"" background=""../image/bkgd-{1}.gif""> {2} </td>
         	<td background=""../image/bkgd-{1}.gif"">
               <div style=""display:flex;justify-content: space-between;"">
-              
-              <div>{4}</div>
-              <div>{3}</div>
+                <div>{4}</div>
+                <div>{3}</div>
               </div>
            </td>
          </tr>", qryArea, Session["tour"].ToString().Substring(8, 1) , HtmlMark, strAction, td3));
@@ -530,9 +527,7 @@ public partial class Diary_diary : System.Web.UI.Page
             + ") AS B where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]"
             + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
             + " order by [日誌班別] desc,[日誌編號] desc,[處理時間]";
-        }
-        
-            
+        }           
         MainHTML("Trace", SQL);
 
         //完成處理且7天內追蹤公告
@@ -546,8 +541,6 @@ public partial class Diary_diary : System.Web.UI.Page
             + " order by [日誌班別] desc,[日誌編號] desc,[處理時間]");
 
         Response.Write("</table>");
-//here
-     //   Session["order"] = !Convert.ToBoolean( Session["order"]);
 
         //Response.Write(SQL);
     }

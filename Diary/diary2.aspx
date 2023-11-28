@@ -1,5 +1,5 @@
-<%@ Page Title="·í¯Z¤é»x" Language="C#" MasterPageFile="../MasterPage.master" AutoEventWireup="true"
-    Debug="true" MaintainScrollPositionOnPostback="true" CodeFile="diary2.aspx.cs" trace="true"
+ï»¿<%@ Page Title="ç•¶ç­æ—¥èªŒ" Language="C#" MasterPageFile="../MasterPage.master" AutoEventWireup="true"
+    Debug="true" MaintainScrollPositionOnPostback="true" CodeFile="diary2.aspx.cs" trace="false"
     Inherits="Diary_diary" %>
 
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
@@ -7,15 +7,16 @@
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
     <div id="divBody" align="center" style="width: 100%; overflow: auto;">
         <% 
-            MainDiary();    //·í¯Z¤é»x
-            MainSave();     //·í¯Z§ó§ï
-            MainTrace();    //°lÂÜ¤½§i
+            MainDiary();    //ç•¶ç­æ—¥èªŒ
+            MainSave();     //ç•¶ç­æ›´æ”¹
+            MainTrace();    //è¿½è¹¤å…¬å‘Š
+            MainKnow();    //çŸ¥è­˜å…¬å‘Š
         %>
     </div>
     <script type="text/javascript">
         var qryArea="Diary",qryTbl,RowNo=0,qryTour,DiaryNo,MsgNo,MsgDT,ProcessNo,MsgCode,FontColor ;
 
-        function trClick(tmpArea,tmpQryTbl,tmpNo,tmpQryTour,tmpDiaryNo,tmpMsgNo,tmpMsgDT,tmpProcessNo,tmpMsgCode,tmpColor)	//ÂI¿ï¦C 
+        function trClick(tmpArea,tmpQryTbl,tmpNo,tmpQryTour,tmpDiaryNo,tmpMsgNo,tmpMsgDT,tmpProcessNo,tmpMsgCode,tmpColor)	//é»é¸åˆ— 
         {
             FontColor="";                        
             document.getElementById("tbl" + qryArea).rows[RowNo].style.background = FontColor;
@@ -25,41 +26,41 @@
             qryArea=tmpArea ; qryTbl=tmpQryTbl ; RowNo=tmpNo ; qryTour=tmpQryTour ; DiaryNo=tmpDiaryNo ; MsgNo=tmpMsgNo ; MsgDT=tmpMsgDT ; ProcessNo=tmpProcessNo ; MsgCode=tmpMsgCode ;            
         }
 
-        function TourClick(qryTour) //²¾¨ìqryTour·í¯Zªº¤é»x
+        function TourClick(qryTour) //ç§»åˆ°qryTourç•¶ç­çš„æ—¥èªŒ
         {
             window.open("Diary.aspx?tour=" + qryTour, "_self");
         }
 
-        function OrderClick() //±Æ§Ç°lÂÜ here
+        function OrderClick() //æ’åºè¿½è¹¤ here
         {
           const params = new URLSearchParams(window.location.search);
 
           const id = params.get('order')==='1'?0 : 1;
           
-            window.open("Diary2.aspx?order=" + id, "_self");
+            window.open("Diary.aspx?order=" + id, "_self");
         }
 
         function MsgDT_Click(qryTour,MsgNo,MsgCode,qryMsgDT)
         {
             var MsgDT="";
-            MsgDT = prompt("½Ğ¿é¤J­n­×§ïªº°T®§®É¶¡¡A®æ¦¡¬°¡Gyyyy/mm/dd hh:mi", qryMsgDT).toString();            
+            MsgDT = prompt("è«‹è¼¸å…¥è¦ä¿®æ”¹çš„è¨Šæ¯æ™‚é–“ï¼Œæ ¼å¼ç‚ºï¼šyyyy/mm/dd hh:mi", qryMsgDT).toString();            
             if(MsgDT != "") window.open("Diary.aspx?DBaction=t&qryTour=" + qryTour + "&MsgNo=" + MsgNo + "&MsgDT=" + MsgDT,"_self");
         }
         
-        function Cmd_KeyDown(KeyCode)    //·s¼W§R°£«öÁä
+        function Cmd_KeyDown(KeyCode)    //æ–°å¢åˆªé™¤æŒ‰éµ
         {
             if (KeyCode == 45) Cmd_Click(qryArea,"a");	//Ins
             else if (KeyCode == 46) Cmd_Click(qryArea,"d")	//Del
         }       
 
-        function trDblClick()	//ÂùÀ»¦C­×§ï 
+        function trDblClick()	//é›™æ“Šåˆ—ä¿®æ”¹ 
         {
             Cmd_Click(qryArea,"u") ;            
         } 
 
-        function Cmd_Click(tmpArea,DBaction)	//·s¼W§R°£­×§ï
+        function Cmd_Click(tmpArea,DBaction)	//æ–°å¢åˆªé™¤ä¿®æ”¹
         {
-            if(qryArea != tmpArea) alert("½Ğ¥ıÂI¿ï±z±ı²§°Ê¤§°O¿ı !");	//¿ï¦¹qryArea«oÂI©¼qryAreaªºCmd
+            if(qryArea != tmpArea) alert("è«‹å…ˆé»é¸æ‚¨æ¬²ç•°å‹•ä¹‹è¨˜éŒ„ !");	//é¸æ­¤qryAreaå»é»å½¼qryAreaçš„Cmd
             else
             {
                 var tmpText = "";                
@@ -70,11 +71,11 @@
                 {
                     case "a": case "u":
                     {
-                        if (qryTbl=="Msg" & DBaction=="a") window.open("Process.aspx?qryTour=" + qryTour + "&DiaryNo=" + DiaryNo,"_self");  //·s¼WMsg                            
+                        if (qryTbl=="Msg" & DBaction=="a") window.open("Process.aspx?qryTour=" + qryTour + "&DiaryNo=" + DiaryNo,"_self");  //æ–°å¢Msg                            
                         else
                         {				 
-                            if (qryTbl=="Msg" & DBaction=="u") MsgDT_Click(qryTour,MsgNo,MsgCode,MsgDT);	//­×§ïMsg                                
-                            else 	//·s¼W©Î­×§ïProcess
+                            if (qryTbl=="Msg" & DBaction=="u") MsgDT_Click(qryTour,MsgNo,MsgCode,MsgDT);	//ä¿®æ”¹Msg                                
+                            else 	//æ–°å¢æˆ–ä¿®æ”¹Process
                             {
                                 if (DBaction=="a") window.open("Process.aspx?qryTour=" + qryTour + "&DiaryNo=" + DiaryNo,"_self");
                                 else window.open("Process.aspx?qryTour=" + qryTour + "&DiaryNo=" + DiaryNo + "&ProcessNo=" + ProcessNo,"_self");
@@ -83,9 +84,9 @@
                      
                         break;
                     }
-                case "d": //§R°£Msg©ÎProcess   
+                case "d": //åˆªé™¤Msgæˆ–Process   
                     {
-                        if (confirm("<<ª`·N>>¡I§R°£¸Óµ§¤é»x¨ì³Ì«á­Y¥u³Ñ¤@µ§µo¥Í°T®§©Î³B²z¹Lµ{¤§«á¡A¾ãµ§¤é»x°O¿ı¡A¥]§t©Ò¦³Äİ©Ê³]©w¡Aµo¥Í°T®§»P³B²z¹Lµ{¡A§¡±N¤@¨Ö§R°£¡I«ØÄ³¥H¥ı·s¼W¦A§R°£ªº¾Ş§@¤è¦¡¡A¥i¥HÁ×§K»~§R¸ê®Æ¡C\n\n±z½T©w§R°£¤U¦C¸ê®Æ¡H\n\n " + tmpText)) 
+                        if (confirm("<<æ³¨æ„>>ï¼åˆªé™¤è©²ç­†æ—¥èªŒåˆ°æœ€å¾Œè‹¥åªå‰©ä¸€ç­†ç™¼ç”Ÿè¨Šæ¯æˆ–è™•ç†éç¨‹ä¹‹å¾Œï¼Œæ•´ç­†æ—¥èªŒè¨˜éŒ„ï¼ŒåŒ…å«æ‰€æœ‰å±¬æ€§è¨­å®šï¼Œç™¼ç”Ÿè¨Šæ¯èˆ‡è™•ç†éç¨‹ï¼Œå‡å°‡ä¸€ä½µåˆªé™¤ï¼å»ºè­°ä»¥å…ˆæ–°å¢å†åˆªé™¤çš„æ“ä½œæ–¹å¼ï¼Œå¯ä»¥é¿å…èª¤åˆªè³‡æ–™ã€‚\n\næ‚¨ç¢ºå®šåˆªé™¤ä¸‹åˆ—è³‡æ–™ï¼Ÿ\n\n " + tmpText)) 
                         {
                             if (qryTbl == "Msg") window.open("Diary.aspx?DBaction=d&qryTour=" + qryTour + "&DiaryNo=" + DiaryNo + "&MsgNo=" + MsgNo, "_self");
                             if (qryTbl == "Process") window.open("Diary.aspx?DBaction=d&qryTour=" + qryTour + "&DiaryNo=" + DiaryNo + "&ProcessNo=" + ProcessNo, "_self");
@@ -95,6 +96,9 @@
                     }
                 }
             }
+        }
+        function JumpKnow(){
+            
         }
     </script>
 </asp:Content>

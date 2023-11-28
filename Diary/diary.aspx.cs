@@ -222,9 +222,15 @@ public partial class Diary_diary : System.Web.UI.Page
             case "Trace":
                 {
                     TipMark = TipMark + "\n第三欄(處理過程)：以顏色區分處理狀態，追蹤棕，永久綠，逾期黃、結案灰";
-                    HtmlMark = "<a name=\"Trace\"><font size=\"4\" face=\"標楷體\" color=\"white\" title=\"" + TipMark + "\n\n一般追蹤放最後修改後1週，永久追蹤放最後修改後1月\" onclick=\"alert(this.title);\">追蹤公告</font></a>";
+                    HtmlMark = "<a name=\"Trace\" href=\"#Know\" style=\"text-decoration: none;\"><font  size=\"4\"  face=\"標楷體\" color=\"white\" title=\"" + TipMark + "\n\n一般追蹤放最後修改後1週，永久追蹤放最後修改後1月\" >追蹤公告</font></a>";
                     td3 = string.Format("<u style=\"color:#0000FF;border-radius: 5px;cursor:pointer;margin-left:5px\" onclick=\"OrderClick();\">依{0}排序▼</u>", Convert.ToBoolean(Request.QueryString["order"]=="1")?"修改時間":"班別日期");
                     break;
+                }
+            case "Know":
+                {
+                    TipMark = TipMark + "\n第三欄(處理過程):以顏色區分日期狀態，永久黑，月結灰";
+                    HtmlMark = "<a  name=\"Know\" href=\"#aspnetForm\" style=\"text-decoration: none;\"><font size=\"4\" face=\"標楷體\" color=\"white\" title=\"" + TipMark + "\n\n知識追蹤放最後修改一個月內，灰色為本月結案，過期結案知識請到 進階查詢->知識查詢\" >知識公告</font></a>";
+                     break;
                 }
         }
 
@@ -387,7 +393,7 @@ public partial class Diary_diary : System.Web.UI.Page
             + "記錄人員：" + dr["單位名稱"].ToString() + "(" + dr["單位代號"].ToString() + ")\\" + dr["員工姓名"].ToString() + "(" + dr["員工代號"].ToString() + ")\">" + strProDT + "</font>";
 
         //第三欄：處理過程(全部，含前二欄)
-        if (qryArea == "Trace")
+        if (qryArea == "Trace" || qryArea == "Know")
         {
             if (dr["處理狀態"].ToString() == "追蹤" & dr["公告期限"].ToString().IndexOf("yyyy") < 0) ProColor = "brown";  //追蹤未到期顯示棕色
             if (dr["處理狀態"].ToString() == "追蹤" & dr["公告期限"].ToString().IndexOf("yyyy") >= 0 | dr["處理狀態"].ToString() == "未定") ProColor = "green";  //永久追蹤或未定顯示綠色
@@ -539,6 +545,58 @@ public partial class Diary_diary : System.Web.UI.Page
             + ") AS B where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]"
             + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
             + " order by [日誌班別] desc,[日誌編號] desc,[處理時間]");
+
+        Response.Write("</table>");
+
+        //Response.Write(SQL);
+    }
+     protected void MainKnow()    //知識公告
+    {
+        FormatHead("Know");
+
+        string tour = Session["tour"].ToString();
+        DateTime dt00 = DateTime.Parse(tour.Substring(0, 4) + "/" + tour.Substring(4, 2) + "/" + tour.Substring(6, 2));
+        DateTime dt01 = dt00.AddDays(1);
+        DateTime dt07 = dt00.AddDays(-7);
+        DateTime dt30 = dt00.AddDays(-30);
+
+        //int order = Convert.ToInt32(Session["order"]);
+        int order =  Convert.ToInt32(Request.QueryString["order"]);
+        string SQL ="";
+        
+        /*
+        SQL = "select A.*  from [View_工作日誌] AS A,(select distinct [日誌班別],[日誌編號] from [View_處理過程]" 
+            + " where [狀態代碼]=3 or [狀態代碼]=1 and [公告期限] not like 'yyyy%' or [狀態代碼]=1 and [公告期限] like 'yyyy%'"
+            + " and ([日誌班別] between '" + dt30.ToString("yyyyMMdd") + tour.Substring(8, 1) + "' and '" + tour + "'"
+            + "  or  [處理存檔] between '" + dt30.ToString("yyyy/MM/dd HH:mm") + "' and '" + dt01.ToString("yyyy/MM/dd") + " 00:00')"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
+            + ") AS B where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]"
+            + " and not ([員工代號]<>'" + Request.Cookies["UserID"].Value.ToString() + "' and [處理過程] like '%@@%')" 
+            + " order by [日誌班別] desc,[日誌編號] desc,[處理時間]";
+          */
+        SQL = string.Format(@"select A.*  from [View_工作日誌] AS A,(select distinct [日誌班別],[日誌編號] from [View_處理過程]
+            where ([狀態代碼]=1 and [公告期限] like 'yyyy%')
+            and ([日誌班別] between '{0}' and '{1}' or  [處理存檔] between '{2}' and '{3} 00:00')
+            and not ([員工代號]<>'{4}' and [處理過程] like '%@@%')) AS B 
+            where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]
+            and not ([員工代號]<>'{4}' and [處理過程] like '%@@%')
+            order by [日誌班別] desc,[日誌編號] desc,[處理時間]"
+        , dt30.ToString("yyyyMMdd") + tour.Substring(8, 1) , tour
+        , dt30.ToString("yyyy/MM/dd HH:mm") , dt01.ToString("yyyy/MM/dd") , Request.Cookies["UserID"].Value.ToString() );
+        MainHTML("Know", SQL);
+
+        //完成處理且30天內知識公告
+       
+        SQL = string.Format(@"select A.*  from [View_工作日誌] AS A,(select distinct [日誌班別],[日誌編號] from [View_處理過程]
+            where ([狀態代碼]=2 and [公告期限] like 'yyyy%')
+            and ([日誌班別] between '{0}' and '{1}' or  [處理存檔] between '{2}' and '{3} 00:00')
+            and not ([員工代號]<>'{4}' and [處理過程] like '%@@%')) AS B 
+            where A.[日誌班別]=B.[日誌班別] and A.[日誌編號]=B.[日誌編號]
+            and not ([員工代號]<>'{4}' and [處理過程] like '%@@%')
+            order by [日誌班別] desc,[日誌編號] desc,[處理時間]"
+        , dt30.ToString("yyyyMMdd") + tour.Substring(8, 1) , tour
+        , dt30.ToString("yyyy/MM/dd HH:mm") , dt01.ToString("yyyy/MM/dd") , Request.Cookies["UserID"].Value.ToString() );
+        MainHTML("Know", SQL);
 
         Response.Write("</table>");
 
