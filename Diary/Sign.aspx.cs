@@ -59,12 +59,35 @@ public partial class Diary_Sign : System.Web.UI.Page
             //string OPs = GetValue("Diary", "select [OPname] from [Sign] where [tour]='" + Session["tour"].ToString() + "'");
             string OPs = GetValue("Diary", "select [OPname] from [Sign] where [tour]= @tour", "tour", Session["tour"].ToString());
             string op = "";
-            for (int i = 0; i < GridView1.Rows.Count; i++)
-            {
-                CheckBox chk = (CheckBox)GridView1.Rows[i].Cells[0].Controls[1];
-                op = GridView1.Rows[i].Cells[1].Text;
-                if (OPs.IndexOf(op) >= 0) chk.Checked = true;
+            if(OPs!=""){
+                for (int i = 0; i < GridView1.Rows.Count; i++)
+                {
+                    CheckBox chk = (CheckBox)GridView1.Rows[i].Cells[0].Controls[1];
+                    op = GridView1.Rows[i].Cells[1].Text;
+                    if (OPs.IndexOf(op) >= 0) chk.Checked = true;
+                }
+            }else{
+                string YYYYMM = Session["tour"].ToString().Substring(0, 6);
+                string DD = Session["tour"].ToString().Substring(6, 2);
+                int tour = Convert.ToInt32(Session["tour"].ToString().Substring(8, 1));
+
+                if(tour>2){//晚班
+                    OPs = GetOP("diary", 
+                        string.Format("select r2.opname, r3.opname FROM [WebSclass].[dbo].[CLASSTABLE] r1 , [diary].[dbo].[OP姓名] r2,  [diary].[dbo].[OP姓名] r3 where [YYMM]={0} AND [DD]={1} AND r1.P5 = r2.opcode and r1.P6 = r3.opcode", YYYYMM, DD));
+                }else{
+                    OPs = GetOP("diary", 
+                        string.Format("select r2.opname, r3.opname FROM [WebSclass].[dbo].[CLASSTABLE] r1 , [diary].[dbo].[OP姓名] r2,  [diary].[dbo].[OP姓名] r3 where [YYMM]={0} AND [DD]={1} AND r1.P3 = r2.opcode and r1.P4 = r3.opcode", YYYYMM, DD));
+                }      
+                Trace.Warn(OPs);
+                for (int i = 0; i < GridView1.Rows.Count; i++)
+                {
+                    CheckBox chk = (CheckBox)GridView1.Rows[i].Cells[0].Controls[1];
+                    op = GridView1.Rows[i].Cells[1].Text;
+                    if (OPs.IndexOf(op) >= 0) chk.Checked = true;
+                }
             }
+           
+
             
             //取得溫濕度資訊
             string txt=GetValue("Diary","select [處理過程] from [View_工作日誌] where [日誌班別]='" + Session["tour"].ToString() + "' and [訊息代碼]='" + THCode + "'");
@@ -114,7 +137,20 @@ public partial class Diary_Sign : System.Web.UI.Page
                 }               
             }
         } 
-    }    
+    }
+
+    protected string GetOP(string DB, string SQL)   //取得OP資料
+    {
+        SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings[DB + "ConnectionString"].ConnectionString);
+        Conn.Open();
+        SqlCommand cmd = new SqlCommand(SQL, Conn);
+        SqlDataReader dr = null;
+        dr = cmd.ExecuteReader();
+        string cfg = ""; if (dr.Read()) cfg = dr[0].ToString() + dr[1].ToString();
+        cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
+
+        return (cfg);
+    }
 
     protected string GetValue(string DB, string SQL)   //取得單一資料
     {
