@@ -629,6 +629,13 @@ public partial class Diary_Process : System.Web.UI.Page
         PanelSave.Visible = true;
     }
 
+
+        protected void LinkEvent_Click(object sender, EventArgs e)  //轉移處理過程(取消)
+    {
+        AddMsg(String.Format("<script>window.open('../Diary/Event.aspx?qryTour={0}&DiaryNo={1}&ProcessNo={2}', '_blank','scrolling=yes, scrollbars=yes, width=480,height=680,top=' + (screen.height-720)/2 + ',left=' + (screen.width-400)/2);</script>",
+        "1", "2", "3"));
+    }
+
     protected void BtnMove_Click(object sender, EventArgs e)  //轉移處理過程(確定)
     {
         string qryTour = Request["qryTour"].ToString(), DiaryNo = Request["DiaryNo"].ToString(), ProcessNo = Request["ProcessNo"].ToString();

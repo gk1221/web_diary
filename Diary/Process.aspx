@@ -526,6 +526,10 @@ Inherits="Diary_Process" %>
           </asp:Panel>
 
           <asp:Panel ID="PanelSave" runat="server">
+            <asp:LinkButton runat="server"
+            ID="LinkEvent" OnClick="LinkEvent_Click" 
+              >加入活動</asp:LinkButton
+            >
             <asp:LinkButton
               ID="LinkMove"
               Visible="false"
