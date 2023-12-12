@@ -54,11 +54,11 @@ public partial class Diary_Process : System.Web.UI.Page
             if (Request["ProcessNo"] != null) ProcessNo = Request["ProcessNo"].ToString();
 
             string ProYYYY = DateTime.Now.ToString("yyyy"), ProMM = DateTime.Now.ToString("MM"), ProDD = DateTime.Now.ToString("dd"), ProHH = DateTime.Now.ToString("HH"), ProMI = DateTime.Now.ToString("mm");
-            string OP = Request.Cookies["UserID"].Value.ToString(), Call = "", Mt = "", ProText = "";            
-			string txtFloorArea = "";			
-			string txtSys = "", txtKind = "", txtDegree = "", txtStatus = "", YYYY = "", MM = "", DD = "", c = "";			
-			string rt = "", nView = "";
-			
+            string OP = Request.Cookies["UserID"].Value.ToString(), Call = "", Mt = "", ProText = "";
+            string txtFloorArea = "";
+            string txtSys = "", txtKind = "", txtDegree = "", txtStatus = "", YYYY = "", MM = "", DD = "", c = "";
+            string rt = "", nView = "";
+
             if (qryTour != "" & ProcessNo != "")  //讀值(全部) for 修改處理過程
             {
                 SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["DiaryConnectionString"].ConnectionString);
@@ -81,19 +81,19 @@ public partial class Diary_Process : System.Web.UI.Page
                     Item.Value = OP;
                     SelOP.Items.Add(Item);
                     txtPM.Text = dr["處理時長"].ToString();
-					
-					txtFloorArea = dr["樓層/機房"].ToString();
-                    
-                    txtSys = dr["根因系統"].ToString(); txtKind = dr["資產類型"].ToString(); txtDegree = dr["異常等級"].ToString(); txtStatus = dr["狀態說明"].ToString(); 
-					rt = dr["評分"].ToString(); nView = dr["觀看數"].ToString();
-					string YMD = dr["公告期限"].ToString();
+
+                    txtFloorArea = dr["樓層/機房"].ToString();
+
+                    txtSys = dr["根因系統"].ToString(); txtKind = dr["資產類型"].ToString(); txtDegree = dr["異常等級"].ToString(); txtStatus = dr["狀態說明"].ToString();
+                    rt = dr["評分"].ToString(); nView = dr["觀看數"].ToString();
+                    string YMD = dr["公告期限"].ToString();
                     if (YMD.Length > 3) YYYY = YMD.Substring(0, 4);
                     if (YMD.Length > 5) MM = YMD.Substring(4, 2);
                     if (YMD.Length > 7) DD = YMD.Substring(6, 2);
                     if (YMD.Length > 8) c = YMD.Substring(8, 1);
                 }
                 cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
-            }            
+            }
             else if (qryTour != "" & DiaryNo != "")  //讀值(日誌屬性) for 新增處理過程
             {
                 SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["DiaryConnectionString"].ConnectionString);
@@ -104,8 +104,8 @@ public partial class Diary_Process : System.Web.UI.Page
                 if (dr.Read())
                 {
                     txtSys = dr["根因系統"].ToString(); txtKind = dr["資產類型"].ToString(); txtDegree = dr["異常等級"].ToString(); txtStatus = dr["狀態說明"].ToString();
-                    
-					string YMD = dr["公告期限"].ToString();
+
+                    string YMD = dr["公告期限"].ToString();
                     if (YMD.Length > 3) YYYY = YMD.Substring(0, 4);
                     if (YMD.Length > 5) MM = YMD.Substring(4, 2);
                     if (YMD.Length > 7) DD = YMD.Substring(6, 2);
@@ -122,7 +122,7 @@ public partial class Diary_Process : System.Web.UI.Page
             for (int i = 0; i < SelProMI.Items.Count; i++) if (SelProMI.Items[i].Value == ProMI) SelProMI.SelectedIndex = i;
 
             if (ProcessNo == "") for (int i = 0; i < SelOP.Items.Count; i++) if (SelOP.Items[i].Value == OP) SelOP.SelectedIndex = i;
-            
+
             for (int i = 0; i < SelCall.Items.Count; i++)
             {
                 if (SelCall.Items[i].Value == Call) SelCall.SelectedIndex = i;
@@ -152,21 +152,21 @@ public partial class Diary_Process : System.Web.UI.Page
             {
                 if (SelStatus.Items[i].Text == txtStatus) SelStatus.SelectedIndex = i;
                 if (SelStatus.Items[i].Text != "") SelStatus.Items[i].Text = SelStatus.Items[i].Text + GetCount("Status", tour, SelStatus.Items[i].Value);
-            }						
-			for (int i = 0; i < SelFloorArea.Items.Count; i++)
-            {
-                if (SelFloorArea.Items[i].Value == txtFloorArea) SelFloorArea.SelectedIndex = i;                
             }
-            
-			txtRt.Text= rt;
-			//txtView.Text= nView;
-			
+            for (int i = 0; i < SelFloorArea.Items.Count; i++)
+            {
+                if (SelFloorArea.Items[i].Value == txtFloorArea) SelFloorArea.SelectedIndex = i;
+            }
+
+            txtRt.Text = rt;
+            //txtView.Text= nView;
+
             for (int i = 0; i < SelYYYY.Items.Count; i++) if (SelYYYY.Items[i].Value == YYYY) SelYYYY.SelectedIndex = i;
             for (int i = 0; i < SelMM.Items.Count; i++) if (SelMM.Items[i].Value == MM) SelMM.SelectedIndex = i;
             for (int i = 0; i < SelDD.Items.Count; i++) if (SelDD.Items[i].Value == DD) SelDD.SelectedIndex = i;
             for (int i = 0; i < SelClass.Items.Count; i++) if (SelClass.Items[i].Value == c) SelClass.SelectedIndex = i;
 
-            for (int i = 0; i < SelMoveYYYY.Items.Count; i++) if (SelMoveYYYY.Items[i].Value == tour.Substring(0,4)) SelMoveYYYY.SelectedIndex = i;
+            for (int i = 0; i < SelMoveYYYY.Items.Count; i++) if (SelMoveYYYY.Items[i].Value == tour.Substring(0, 4)) SelMoveYYYY.SelectedIndex = i;
             for (int i = 0; i < SelMoveMM.Items.Count; i++) if (SelMoveMM.Items[i].Value == tour.Substring(4, 2)) SelMoveMM.SelectedIndex = i;
             for (int i = 0; i < SelMoveDD.Items.Count; i++) if (SelMoveDD.Items[i].Value == tour.Substring(6, 2)) SelMoveDD.SelectedIndex = i;
             for (int i = 0; i < SelMoveClass.Items.Count; i++) if (SelMoveClass.Items[i].Value == tour.Substring(8, 1)) SelMoveClass.SelectedIndex = i;
@@ -174,19 +174,19 @@ public partial class Diary_Process : System.Web.UI.Page
             AddMenu(MenuWord);  //導入詞彙
             AddMenu(MenuMt);  //導入人員(服務系統)
             AddMenuMt();  //導入人員
-			
-			
-			string sBtnRate="window.open('../Diary/Rating.aspx?tour=" + qryTour + "&DiaryNo=" + DiaryNo + "','_blank','scrolling=yes, scrollbars=yes, width=480,height=680,top=' + (screen.height-720)/2 + ',left=' + (screen.width-400)/2) ;";
-			//string sBtnRate="window.open('../Diary/Rating.aspx?tour=" + qryTour + "&DiaryNo=" + DiaryNo + "')";
-			BtnRate.Attributes.Add("onclick",sBtnRate);
-		}
+
+
+            string sBtnRate = "window.open('../Diary/Rating.aspx?tour=" + qryTour + "&DiaryNo=" + DiaryNo + "','_blank','scrolling=yes, scrollbars=yes, width=480,height=680,top=' + (screen.height-720)/2 + ',left=' + (screen.width-400)/2) ;";
+            //string sBtnRate="window.open('../Diary/Rating.aspx?tour=" + qryTour + "&DiaryNo=" + DiaryNo + "')";
+            BtnRate.Attributes.Add("onclick", sBtnRate);
+        }
     }
 
     protected void AddMenu(Menu menu)
     {
         SqlConnection Conn = new SqlConnection();
-        string SQL = "";        
-        
+        string SQL = "";
+
         if (menu.ID == "MenuMt")
         {
             MenuItem itemx = new MenuItem();
@@ -196,11 +196,11 @@ public partial class Diary_Process : System.Web.UI.Page
             Conn.ConnectionString = WebConfigurationManager.ConnectionStrings["DiaryConnectionString"].ConnectionString;
             SQL = "Select [成員],[成員] from [View_維護群組] where [群組]='軟-服務系統' order by [排序]";
         }
-        else 
+        else
         {
             Conn.ConnectionString = WebConfigurationManager.ConnectionStrings["DiaryConnectionString"].ConnectionString;
             SQL = "select [Mark] + ' ' + [Item] as [Item],[Memo] from [Config] where [Kind]='導入詞彙'";
-            string SysCode = SelSysCode.SelectedValue; if (SysCode == "" & Request["MsgCode"] != null) SysCode = Request["MsgCode"].ToString().Substring(1, 3); 
+            string SysCode = SelSysCode.SelectedValue; if (SysCode == "" & Request["MsgCode"] != null) SysCode = Request["MsgCode"].ToString().Substring(1, 3);
             if (SysCode != "")
             {
                 string SysGroup = GetValue("Diary", "select [Memo] from [Config] where [Kind]='系統代碼' and [Config]='" + SysCode + "'");
@@ -208,8 +208,8 @@ public partial class Diary_Process : System.Web.UI.Page
             }
             SQL = SQL + " order by [Mark]";
         }
-        
-        
+
+
         Conn.Open();
         SqlCommand cmd = new SqlCommand(SQL, Conn);
         SqlDataReader dr = null;
@@ -236,16 +236,16 @@ public partial class Diary_Process : System.Web.UI.Page
         dr = cmd.ExecuteReader();
         string tmp = ""; MenuItem tmpItem = new MenuItem();
         while (dr.Read())
-        {            
+        {
             if (tmp != dr[2].ToString())
             {
                 tmpItem = new MenuItem();
-                tmpItem.Text = dr[2].ToString() ;
+                tmpItem.Text = dr[2].ToString();
                 MenuMt.Items[0].ChildItems.Add(tmpItem);
             }
             tmp = dr[2].ToString();
 
-            if(dr[0].ToString() != tmp)
+            if (dr[0].ToString() != tmp)
             {
                 MenuItem itemx = new MenuItem();
                 itemx.Text = dr[0].ToString();
@@ -413,7 +413,7 @@ public partial class Diary_Process : System.Web.UI.Page
         else if (SelDegree.SelectedValue == "") AddMsg("<script>alert('請設定異常等級 !');</script>");
         else if (Request.Cookies["UserID"].Value.ToLower() == "operator" & (SelOP.SelectedValue == "" | SelOP.SelectedValue.ToLower() == "operator"))
             AddMsg("<script>alert('無法識別您的身份，請使用個人帳號記錄 !');</script>");
-        else if (SelCall.SelectedValue == "" | SelCall.SelectedValue == "不用" & txtMt.Text != "" | SelCall.SelectedValue != "不用" & txtMt.Text == "") 
+        else if (SelCall.SelectedValue == "" | SelCall.SelectedValue == "不用" & txtMt.Text != "" | SelCall.SelectedValue != "不用" & txtMt.Text == "")
             AddMsg("<script>alert('請設定叫修時段或維護人員，若不需要請選不用 !');</script>");
         else
         {
@@ -423,7 +423,7 @@ public partial class Diary_Process : System.Web.UI.Page
                 AddMsg("<script>alert('請在現存記錄之下新增處理過程，或請機房起始一筆新的日誌記錄！');</script>");
                 ExitYN = false;
             }
-            if (GetValue("Diary","select [tour] from [Sign] where [tour]='" + qryTour + "'") == "") 
+            if (GetValue("Diary", "select [tour] from [Sign] where [tour]='" + qryTour + "'") == "")
             {
                 AddMsg("<script>alert('請先簽名！');</script>");
                 ExitYN = false;
@@ -444,8 +444,8 @@ public partial class Diary_Process : System.Web.UI.Page
                 if (MsgCode != "") InsMsg(qryTour, DiaryNo, MsgCode);//有訊息編號代表要新增一筆訊息記錄
             }
 
-            if(ExitYN) BtnExit_Click(null, null);  //離開
-        }        
+            if (ExitYN) BtnExit_Click(null, null);  //離開
+        }
     }
 
     protected void BtnExit_Click(object sender, EventArgs e)  //離開
@@ -473,15 +473,15 @@ public partial class Diary_Process : System.Web.UI.Page
     {
         string e_tour = SelYYYY.SelectedValue + SelMM.SelectedValue + SelDD.SelectedValue + SelClass.SelectedValue;
         string SaveDT = DateTime.Now.ToString("yyyy/MM/dd HH:mm");
-        string pm = txtPM.Text==""?"0":txtPM.Text;
+        string pm = txtPM.Text == "" ? "0" : txtPM.Text;
         //有修改屬性才需存檔
         string SaveFlag = "1";
         if (DiaryNo != "") SaveFlag = GetValue("Diary", "select count(*) from [Diary] where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo
              + " and ([Status]<>" + SelStatus.SelectedValue + " or [e_tour]<>'" + e_tour + "' or [Degree]<>" + SelDegree.SelectedValue
              + " or [SysCode]<>'" + SelSysCode.SelectedValue + "' or [Kind]<>'" + SelKind.SelectedValue + "') ");
         if (SaveFlag == "1") ExecDbSQL("update [Diary] set [SaveDT]='" + SaveDT + "',[Degree]=" + SelDegree.SelectedValue + ",[SysCode]='" + SelSysCode.SelectedValue
-             + "',[Kind]='" + SelKind.SelectedValue + "',[Status]=" + SelStatus.SelectedValue + ",[e_tour]='" + e_tour 
-             + "' where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo );
+             + "',[Kind]='" + SelKind.SelectedValue + "',[Status]=" + SelStatus.SelectedValue + ",[e_tour]='" + e_tour
+             + "' where [tour]='" + qryTour + "' and [DiaryNo]=" + DiaryNo);
     }
 
     protected void InsProcess(string qryTour, string DiaryNo) //無處理過程序號代表要新增一筆處理過程記錄
@@ -494,7 +494,7 @@ public partial class Diary_Process : System.Web.UI.Page
         string UserID = Request.Cookies["UserID"].Value;
         string UnitID = Request.Cookies["UnitID"].Value;
         string UnitName = HttpUtility.UrlDecode(Request.Cookies["UnitName"].Value);
-        string pm = txtPM.Text==""?"0":txtPM.Text;
+        string pm = txtPM.Text == "" ? "0" : txtPM.Text;
         if (SelOP.SelectedValue != "" & UnitID == "SOS")  //機房新增記錄可改身分
         {
             UserID = SelOP.SelectedValue;
@@ -502,7 +502,7 @@ public partial class Diary_Process : System.Web.UI.Page
         }
 
         ExecDbSQL("insert into [Process] values('" + qryTour + "'," + DiaryNo + "," + ProcessNo + ",'" + ProcessDT + "','" + SaveDT + "',N'"
-            + ProText + "','" + UnitID + "','" + UserID + "','" + UnitName + "','" + UserName + "','" + SelFloorArea.SelectedValue + "' , "+ pm  +")");
+            + ProText + "','" + UnitID + "','" + UserID + "','" + UnitName + "','" + UserName + "','" + SelFloorArea.SelectedValue + "' , " + pm + ")");
 
         if (SelCall.SelectedValue != "不用") ExecDbSQL("insert into [CallMt] values('" + qryTour + "'," + DiaryNo + "," + ProcessNo + ",'" + SelCall.SelectedValue + "','" + txtMt.Text + "','" + SaveDT + "','" + UserName + "')");
     }
@@ -513,8 +513,8 @@ public partial class Diary_Process : System.Web.UI.Page
         string ProDT = SelProYYYY.SelectedValue + "/" + SelProMM.SelectedValue + "/" + SelProDD.SelectedValue + " " + SelProHH.SelectedValue + ":" + SelProMI.SelectedValue;
         string UserName = HttpUtility.UrlDecode(Request.Cookies["UserName"].Value);
         Boolean ExitYN = true;  //是否執行離開函數		
-		string FloorArea = "";
-        string NewPm = txtPM.Text==""?"0":txtPM.Text;
+        string FloorArea = "";
+        string NewPm = txtPM.Text == "" ? "0" : txtPM.Text;
 
         SqlConnection Conn = new SqlConnection(WebConfigurationManager.ConnectionStrings["DiaryConnectionString"].ConnectionString);
         Conn.Open();
@@ -524,10 +524,10 @@ public partial class Diary_Process : System.Web.UI.Page
         if (dr.Read())
         {
             ProcessDT = dr["ProcessDT"].ToString(); SaveDT = dr["SaveDT"].ToString(); ProText = dr["ProText"].ToString();
-            UnitID = dr["UnitID"].ToString(); UserID = dr["UserID"].ToString();			
-			FloorArea = dr["Dist"].ToString();
+            UnitID = dr["UnitID"].ToString(); UserID = dr["UserID"].ToString();
+            FloorArea = dr["Dist"].ToString();
             string Pm = dr["process_time"].ToString();
-			
+
             if (UserID.ToLower() != Request.Cookies["UserID"].Value.ToLower() & (txtProcess.Text != ProText | ProcessDT != ProDT))
             {   //處理過程有動，就一定要本人才能改
                 AddMsg("<script>alert('非本人記錄之處理過程不能修改(日誌屬性可以)，若仍須異動,請先新增再刪除 !');</script>");
@@ -541,7 +541,7 @@ public partial class Diary_Process : System.Web.UI.Page
                         + "[ProText]=N'" + txtProcess.Text.Replace("'", "''") + "',[Dist]='" + SelFloorArea.SelectedValue + "',[process_time]=" + NewPm
                         + " where [tour]='" + qryTour + "' and [ProcessNo]=" + ProcessNo);
                     InsProcessLog(qryTour, ProcessNo, ProcessDT, ProText, SaveDT);
-                }                
+                }
             }
         }
         cmd.Cancel(); cmd.Dispose(); dr.Close(); Conn.Close(); Conn.Dispose();
@@ -630,10 +630,10 @@ public partial class Diary_Process : System.Web.UI.Page
     }
 
 
-        protected void LinkEvent_Click(object sender, EventArgs e)  //轉移處理過程(取消)
+    protected void LinkEvent_Click(object sender, EventArgs e)  //轉移處理過程(取消)
     {
-        AddMsg(String.Format("<script>window.open('../Diary/Event.aspx?qryTour={0}&DiaryNo={1}&ProcessNo={2}', '_blank','scrolling=yes, scrollbars=yes, width=480,height=680,top=' + (screen.height-720)/2 + ',left=' + (screen.width-400)/2);</script>",
-        "1", "2", "3"));
+        AddMsg(String.Format("<script>window.open('../Diary/Event.aspx?qryTour={0}&ProcessNo={1}', '_blank','scrolling=yes, scrollbars=yes, width=520,height=680,top=' + (screen.height-720)/2 + ',left=' + (screen.width-400)/2);</script>",
+       Request["qryTour"].ToString(), Request["ProcessNo"].ToString()));
     }
 
     protected void BtnMove_Click(object sender, EventArgs e)  //轉移處理過程(確定)
@@ -675,7 +675,7 @@ public partial class Diary_Process : System.Web.UI.Page
     {
         string qryTour = Request["qryTour"].ToString();
         string DiaryNo = "0"; if (Request["DiaryNo"] != null) Request["DiaryNo"].ToString();
-        
+
         return ("(select '(請選擇)' as [TextNo],'-1' as [DiaryNo])"
             + " Union (select distinct substring(CAST([DiaryNo]+1000 AS nvarchar),2,3) as [TextNo],"
             + "CAST([DiaryNo] AS nvarchar) AS [DiaryNo] from [Diary] where [tour]='" + tour

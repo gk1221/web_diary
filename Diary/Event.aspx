@@ -1,4 +1,4 @@
-﻿<%@ Page Title="活動加入" Language="C#" AutoEventWireup="true" trace='true'
+﻿<%@ Page Title="活動加入" Language="C#" AutoEventWireup="true" trace='false'
 Debug="true" MaintainScrollPositionOnPostback="true" Inherits="Diary_Event"
 CodeFile="Event.aspx.cs" %>
 
@@ -29,6 +29,11 @@ CodeFile="Event.aspx.cs" %>
         runat="server"
         />
 
+        <div style="margin: 20px 0 20px 0 ;">
+          <asp:Label ID="action" runat="server" />
+        </div>
+        
+
         <div style="margin-top: 20px;">
             <label>活動開始:</label>
             <asp:Textbox runat="server" class="timebox" type="text" name="filter-date" id="sdate"/>
@@ -39,9 +44,16 @@ CodeFile="Event.aspx.cs" %>
             <asp:Textbox runat="server" class="timebox" type="text" name="filter-date" id="edate"/>
         </div>
 
+        <div style="margin-top: 20px;display: flex;align-items: flex-start;justify-content: center;" >
+          <label>活動內容:</label>
+          <asp:Textbox runat="server" style="width: 350px;height: 200px;" class="timebox" type="text" name="filter-date"
+           id="eventbox"  
+          TextMode="MultiLine"/>
+      </div>
+
         <div style="margin-top: 20px;">
-            <asp:button runat="server" id="Btn_save" text="存檔" />
-            <asp:button runat="server" id="Btn_exit" text="離開" />
+            <asp:button runat="server" id="Btn_save" text="存檔" onClick="Btnsave_click"/>
+            <asp:button runat="server" id="Btn_exit" text="刪除" OnClientClick="return confirm('確定要刪除這筆活動嗎')" onclick="BtnDel_Click" />
         </div>
 
 
