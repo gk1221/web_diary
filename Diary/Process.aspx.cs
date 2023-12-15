@@ -632,8 +632,16 @@ public partial class Diary_Process : System.Web.UI.Page
 
     protected void LinkEvent_Click(object sender, EventArgs e)  //轉移處理過程(取消)
     {
-        AddMsg(String.Format("<script>window.open('../Diary/Event.aspx?qryTour={0}&ProcessNo={1}', '_blank','scrolling=yes, scrollbars=yes, width=520,height=680,top=' + (screen.height-720)/2 + ',left=' + (screen.width-400)/2);</script>",
-       Request["qryTour"].ToString(), Request["ProcessNo"].ToString()));
+        if (Request["ProcessNo"] == null)
+        {
+            AddMsg(String.Format("<script>alert('請先完成處理新增!')</script>"));
+        }
+        else
+        {
+            AddMsg(String.Format("<script>window.open('../Diary/Event.aspx?qryTour={0}&ProcessNo={1}', '_blank','scrolling=yes, scrollbars=yes, width=520,height=680,top=' + (screen.height-720)/2 + ',left=' + (screen.width-400)/2);</script>",
+                 Request["qryTour"].ToString(), Request["ProcessNo"].ToString()));
+        }
+
     }
 
     protected void BtnMove_Click(object sender, EventArgs e)  //轉移處理過程(確定)
