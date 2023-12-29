@@ -7,7 +7,7 @@ using System.Web.UI.WebControls;
 using System.Web.Configuration;
 using System.Data;
 using System.Data.SqlClient;
-
+using System.Globalization;
 
 public partial class Diary_Event : System.Web.UI.Page
 {
@@ -109,6 +109,8 @@ public partial class Diary_Event : System.Web.UI.Page
         string eventcontent = eventbox.Text;
         string start = sdate.Text;
         string enddate = edate.Text;
+        string outwaring = ErrorCheck();
+
         string SQL = "INSERT INTO [dbo].[event] VALUES (@tour, @process, @eventcontent, @startdate, @enddate)";
 
         Literal msg = new Literal();
@@ -119,6 +121,7 @@ public partial class Diary_Event : System.Web.UI.Page
             {
                 try
                 {
+                    if (outwaring != "") throw new Exception();
                     List<SqlParameter> pars = new List<SqlParameter>();
                     pars.Add(new SqlParameter("tour", tour));
                     pars.Add(new SqlParameter("process", process));
@@ -136,7 +139,8 @@ public partial class Diary_Event : System.Web.UI.Page
                 catch (System.Exception e)
                 {
                     Trace.Warn(e.ToString());
-                    msg.Text = "<script>alert('新增失敗，請再試一次');</script>";
+
+                    msg.Text = "<script>alert('新增失敗，請再試一次\\n" + outwaring + "');</script>";
                 }
 
             }
@@ -152,7 +156,7 @@ public partial class Diary_Event : System.Web.UI.Page
         string eventcontent = eventbox.Text;
         string start = sdate.Text;
         string enddate = edate.Text;
-
+        string outwaring = ErrorCheck();
         Dictionary<string, string> ans = new Dictionary<string, string>();
         string upSQL = " SET ";
 
@@ -164,6 +168,7 @@ public partial class Diary_Event : System.Web.UI.Page
             {
                 try
                 {
+                    if (outwaring != "") throw new Exception();
                     Conn.Open();
                     upSQL += " event=@event,   startDate=@sdate,   endDate=@edate ";
 
@@ -189,11 +194,24 @@ public partial class Diary_Event : System.Web.UI.Page
                 catch (System.Exception e)
                 {
                     Trace.Warn(e.ToString());
-                    msg.Text = "<script>alert('修改失敗，請再試一次');</script>";
+
+
+                    msg.Text = "<script>alert('修改失敗，請再試一次\\n" + outwaring + "');</script>";
                 }
             }
         }
         Page.Controls.Add(msg);
+    }
+    protected string ErrorCheck()
+    {
+        string outwaring = "";
+        int result = DateTime.Compare(DateTime.Parse(sdate.Text), DateTime.Parse(edate.Text));
+        Trace.Warn(result.ToString());
+
+        if (eventbox.Text.Length > 100) outwaring += "\\n活動內容太長，請縮短至100字內(目前" + eventbox.Text.Length + "個字)!";
+        if (result > 0) outwaring += "\\n起始日期不得小於結束日期!";
+
+        return outwaring;
     }
 
     protected void BtnDel_Click(object o, EventArgs e)
