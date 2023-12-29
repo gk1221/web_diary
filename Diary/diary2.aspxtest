@@ -2,9 +2,61 @@
     Debug="true" MaintainScrollPositionOnPostback="true" CodeFile="diary2.aspx.cs" trace="false"
     Inherits="Diary_diary" %>
 
-<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="Server">
-</asp:Content>
+
+
+
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="Server">
+
+        <style type="text/css">
+                .button-22 {
+        align-items: center;
+        appearance: button;
+
+        border-radius: 8px;
+        border-style: none;
+        box-shadow: rgba(255, 255, 255, 0.26) 0 1px 2px inset;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        display: flex;
+        flex-direction: row;
+        flex-shrink: 0;
+        font-family: Microsoft JhengHei,sans-serif;
+        font-size: 100%;
+        line-height: 1.15;
+        margin: 0 10px 0 10px;
+        padding: 3px 5px;
+        text-align: center;
+        text-transform: none;
+        transition: color .13s ease-in-out,background .13s ease-in-out,opacity .13s ease-in-out,box-shadow .13s ease-in-out;
+        user-select: none;
+        text-decoration: none;
+
+        -webkit-user-select: none;
+        touch-action: manipulation;
+      }
+      
+
+      .color1{
+        background-color: #0276FF;
+      }
+      .color1:hover{
+        background-color: #3b93ff;
+      }
+      .color2{
+        background-color: #ff9102;
+      }
+      .color2:hover{
+        background-color: #ffb24e;
+      }
+      .color3{
+        background-color: #606060;
+      }
+      .color3:hover{
+        background-color: #a6a5a5;
+      }
+        </style>
+
     <div id="divBody" align="center" style="width: 100%; overflow: auto;">
         <% 
             MainDiary();    //當班日誌
